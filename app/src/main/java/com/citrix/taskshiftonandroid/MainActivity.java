@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.test);
 
         //creat listview object
         ListView taskList = (ListView) findViewById(R.id.lv_main);
@@ -50,6 +50,6 @@ public class MainActivity extends AppCompatActivity {
                 new int[] {R.id.taskPicture,R.id.taskTicketId,R.id.taskType, R.id.taskSummary}
                 );
 
-        taskList.setAdapter(adapter);
+        //taskList.setAdapter(adapter);
     }
 }
