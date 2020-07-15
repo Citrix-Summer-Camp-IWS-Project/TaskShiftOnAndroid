@@ -20,64 +20,58 @@
         android:orientation="vertical">
 
         <!-- Media -->
+
+        <!-- Buttons -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="106dp">
 
-            <ImageView
-                android:layout_width="53dp"
-                android:layout_height="43dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="18dp"
-                android:contentDescription="test"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/jira" />
-
             <TextView
-                android:layout_width="62dp"
+                android:id="@+id/TS"
+                android:layout_width="66dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="92dp"
-                android:layout_marginLeft="92dp"
-                android:layout_marginBottom="71dp"
+                android:layout_marginStart="44dp"
+                android:layout_marginLeft="44dp"
+                android:layout_marginBottom="66dp"
                 android:text="TS-11"
                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
             <TextView
-                android:layout_width="210dp"
-                android:layout_height="46dp"
+                android:id="@+id/summary"
+                android:layout_width="281dp"
+                android:layout_height="50dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="72dp"
-                android:layout_marginLeft="72dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginLeft="11dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="21dp"
+                android:layout_marginBottom="1dp"
                 android:text="Investigate how blue tooth works on Android"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="18sp" />
 
             <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="28dp"
-                android:layout_height="26dp"
+                android:id="@+id/storyType"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="62dp"
-                android:layout_marginLeft="62dp"
-                android:layout_marginBottom="68dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="67dp"
                 app:srcCompat="@drawable/epic" />
 
         </RelativeLayout>
 
-        <!-- Buttons -->
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_margin="8dp"
             android:gravity="right"
             android:orientation="horizontal">
@@ -95,7 +89,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DONE" />
+
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/jira"
+            android:layout_width="22dp"
+            android:layout_height="21dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginRight="2dp"
+            android:contentDescription="test"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/icons8_jira_240" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
 
     </LinearLayout>
 
