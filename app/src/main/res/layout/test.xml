@@ -15,7 +15,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="155dp"
         android:gravity="right"
         android:orientation="vertical">
 
@@ -46,10 +46,10 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="11dp"
-                android:layout_marginLeft="11dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginLeft="24dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="0dp"
                 android:text="Investigate how blue tooth works on Android"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary"
@@ -62,11 +62,51 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginBottom="67dp"
+                android:layout_marginStart="9dp"
+                android:layout_marginLeft="9dp"
+                android:layout_marginBottom="62dp"
                 app:srcCompat="@drawable/epic" />
 
+            <ImageView
+                android:id="@+id/jira"
+                android:layout_width="22dp"
+                android:layout_height="21dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginRight="19dp"
+                android:layout_marginBottom="70dp"
+                android:contentDescription="test"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/icons8_jira_240" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="395dp"
+            android:layout_height="55dp">
+
+            <com.google.android.material.button.MaterialButton
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="114dp"
+                android:layout_marginRight="114dp"
+                android:text="START" />
+
+            <com.google.android.material.button.MaterialButton
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="18dp"
+                android:layout_marginRight="18dp"
+                android:text="DONE" />
         </RelativeLayout>
 
         <LinearLayout
@@ -76,38 +116,7 @@
             android:gravity="right"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="START" />
-
-            <com.google.android.material.button.MaterialButton
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DONE" />
-
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/jira"
-            android:layout_width="22dp"
-            android:layout_height="21dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginRight="2dp"
-            android:contentDescription="test"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/icons8_jira_240" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </RelativeLayout>
 
     </LinearLayout>
 

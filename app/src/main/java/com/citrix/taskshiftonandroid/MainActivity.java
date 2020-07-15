@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -74,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
         //initiate recycle view
         RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
+        //define the width of divider
+        int space = 2;
+        rv.addItemDecoration(new SpacesItemDecoration(space));
 
         //这里我们选择创建一个LinearLayoutManager
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -86,15 +91,32 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
     }
 
 
 
 
+}
+// for the divider width
+class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+    private int space;
+
+    public SpacesItemDecoration(int space) {
+        this.space = space;
+    }
+
+    @Override
+    public void getItemOffsets(Rect outRect, View view,
+                               RecyclerView parent, RecyclerView.State state) {
+        //outRect.left = space;
+        //outRect.right = space;
+
+        // Add top margin only for the first item to avoid double space between items
+        //if (parent.getChildPosition(view) == 0 ) {
+        //outRect.top = space;
+        //}
+        if (parent.getChildPosition(view) != parent.getChildCount() ) {
+            outRect.bottom = space;
+        }
+    }
 }

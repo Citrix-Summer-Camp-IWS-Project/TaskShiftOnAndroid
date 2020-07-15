@@ -24,11 +24,15 @@ public class Item {
         List<Item> Items;
         Items = new ArrayList<>();
         Items.add(new Item("TS-6", "Investigate how blue tooth works on Android"
-                , R.drawable.jira, R.drawable.epic));
+                , R.drawable.icons8_jira_240, R.drawable.epic));
         Items.add(new Item("TS-11", "Develop task list UI"
-                , R.drawable.jira, R.drawable.story));
+                , R.drawable.icons8_jira_240, R.drawable.story));
         Items.add(new Item("TS-13", "Get tickets from Jira service from Android application"
-                , R.drawable.jira, R.drawable.story));
+                , R.drawable.icons8_jira_240, R.drawable.story));
+        Items.add(new Item("TS-6", "Investigate how blue tooth works on Android"
+                , R.drawable.icons8_jira_240, R.drawable.epic));
+        Items.add(new Item("TS-11", "Develop task list UI"
+                , R.drawable.icons8_jira_240, R.drawable.story));
         return Items;
     }
 }
