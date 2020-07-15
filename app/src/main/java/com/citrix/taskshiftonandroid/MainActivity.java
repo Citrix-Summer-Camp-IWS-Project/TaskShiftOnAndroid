@@ -1,6 +1,7 @@
 package com.citrix.taskshiftonandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -61,16 +62,16 @@ public class MainActivity extends AppCompatActivity {
 //        taskList.setAdapter(adapter);
 
         //button function
-        Button button = findViewById(R.id.startButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        //Button button = findViewById(R.id.startButton);
+        //button.setOnClickListener(new View.OnClickListener() {
+       // public void onClick(View v) {
 //                // your handler code here
 //                Items.add(new Item("TS-6", "Investigate how blue tooth works on Android"
 //                        , R.drawable.icons8_jira_240, R.drawable.epic));
 //                Items.add(new Item("TS-11", "Develop task list UI"
 //                        , R.drawable.icons8_jira_240, R.drawable.story));
-            }
-        });
+         //   }
+        //});
 
 
         //data
@@ -96,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
         //PagerSnapHelper snapHelper = new PagerSnapHelper();
         //snapHelper.attachToRecyclerView(rv);
 
+        ItemTouchHelper.Callback callback =
+                new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(rv);
 
 
     }
@@ -103,27 +108,21 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-}
-// for the divider width
-class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-    private int space;
+    // for the divider width
+    class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+        private int space;
 
-    public SpacesItemDecoration(int space) {
-        this.space = space;
-    }
+        public SpacesItemDecoration(int space) {
+            this.space = space;
+        }
 
-    @Override
-    public void getItemOffsets(Rect outRect, View view,
-                               RecyclerView parent, RecyclerView.State state) {
-        //outRect.left = space;
-        //outRect.right = space;
+        @Override
+        public void getItemOffsets(Rect outRect, View view,
+                                   RecyclerView parent, RecyclerView.State state) {
 
-        // Add top margin only for the first item to avoid double space between items
-        //if (parent.getChildPosition(view) == 0 ) {
-        //outRect.top = space;
-        //}
-        if (parent.getChildPosition(view) != parent.getChildCount() ) {
-            outRect.bottom = space;
+            if (parent.getChildPosition(view) != parent.getChildCount() ) {
+                outRect.bottom = space;
+            }
         }
     }
 }
