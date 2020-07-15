@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
         //creat listview object
         ListView taskList = (ListView) findViewById(R.id.lv_main);
-
         //hardcode task data to show
         List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
         Map<String, Object> map = new HashMap<String,Object>();
