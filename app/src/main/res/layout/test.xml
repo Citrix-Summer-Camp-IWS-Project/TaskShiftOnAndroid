@@ -75,9 +75,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="19dp"
-                android:layout_marginRight="19dp"
-                android:layout_marginBottom="70dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginBottom="69dp"
                 android:contentDescription="test"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/icons8_jira_240" />
@@ -89,6 +89,7 @@
             android:layout_height="55dp">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/startButton"
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

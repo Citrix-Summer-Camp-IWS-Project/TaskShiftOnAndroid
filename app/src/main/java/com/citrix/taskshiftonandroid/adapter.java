@@ -61,6 +61,16 @@ public class adapter extends RecyclerView.Adapter<adapter.PersonViewHolder> {
         }
     }
 
+    //for add item
+    //public void remove(int position){
+    //    Items.remove(position);
+    //    notifyItemRemoved(position);
+    //}
+    //for delete item
+    //public void add(int position,String data) {
+    //    Items.add(position,data);
+    //    notifyItemInserted(position);
+    //}
 
 }
 

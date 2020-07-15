@@ -7,14 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import com.citrix.taskshiftonandroid.Item;
+
 public class MainActivity extends AppCompatActivity {
 
     private List<Item> Items;
@@ -64,12 +60,22 @@ public class MainActivity extends AppCompatActivity {
 //        //set
 //        taskList.setAdapter(adapter);
 
-
+        //button function
+        Button button = findViewById(R.id.startButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+//                // your handler code here
+//                Items.add(new Item("TS-6", "Investigate how blue tooth works on Android"
+//                        , R.drawable.icons8_jira_240, R.drawable.epic));
+//                Items.add(new Item("TS-11", "Develop task list UI"
+//                        , R.drawable.icons8_jira_240, R.drawable.story));
+            }
+        });
 
 
         //data
         //Items = new ArrayList<>();
-        List<Item> Items = Item.initializeData();
+        Items = Item.initializeData();
 
 
 
@@ -87,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(layoutManager);
         adapter adapter = new adapter(Items);
         rv.setAdapter(adapter);
-
+        //PagerSnapHelper snapHelper = new PagerSnapHelper();
+        //snapHelper.attachToRecyclerView(rv);
 
 
 
