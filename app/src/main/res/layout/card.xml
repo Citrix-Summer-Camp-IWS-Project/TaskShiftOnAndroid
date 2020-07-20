@@ -24,7 +24,7 @@
         <!-- Buttons -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="106dp">
+            android:layout_height="100dp">
 
             <TextView
                 android:id="@+id/TS"
@@ -35,19 +35,19 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="44dp"
                 android:layout_marginLeft="44dp"
-                android:layout_marginBottom="66dp"
+                android:layout_marginBottom="58dp"
                 android:text="TS-11"
                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
             <TextView
                 android:id="@+id/summary"
-                android:layout_width="281dp"
-                android:layout_height="50dp"
+                android:layout_width="279dp"
+                android:layout_height="47dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
+                android:layout_marginStart="26dp"
+                android:layout_marginLeft="26dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="0dp"
                 android:text="Investigate how blue tooth works on Android"
@@ -62,9 +62,9 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="9dp"
-                android:layout_marginLeft="9dp"
-                android:layout_marginBottom="62dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginLeft="11dp"
+                android:layout_marginBottom="56dp"
                 app:srcCompat="@drawable/epic" />
 
             <ImageView
@@ -75,9 +75,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="18dp"
-                android:layout_marginRight="18dp"
-                android:layout_marginBottom="69dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginRight="19dp"
+                android:layout_marginBottom="63dp"
                 android:contentDescription="test"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/icons8_jira_240" />

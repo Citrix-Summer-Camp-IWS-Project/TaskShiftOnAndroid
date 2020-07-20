@@ -18,7 +18,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.test, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card, viewGroup, false);
         CardViewHolder cvh = new CardViewHolder(v);
         return cvh;
     }
@@ -49,6 +49,11 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     public void onItemDismiss(int position) {
         Items.remove(position);
         notifyItemRemoved(position);
+
+        //Items.add(new Item("TS-6", "Investigate how blue tooth works on Android"
+        //       , R.drawable.icons8_jira_240, R.drawable.epic));
+        //detect the dynamic change in list
+        System.out.println("this is number of items" + Items.size());
     }
     @Override
     public void onItemMove(int from, int to) {
@@ -57,7 +62,14 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     }
     //interface above
 
-
+    public void remove(int position){
+        Items.remove(position);
+        notifyItemRemoved(position);
+    }
+    public void add(int position,Item Item) {
+        Items.add(position,Item);
+        notifyItemInserted(position);
+    }
 
     adapter(List<Item> Items){
         this.Items = Items;
