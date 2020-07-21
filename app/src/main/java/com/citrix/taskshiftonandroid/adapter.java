@@ -50,7 +50,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     //try to implement interface (listener)
 
     @Override
-    public void onItemDismiss(int position) throws IOException, InterruptedException {
+    public void onItemDismiss(int position) throws IOException {
         Item a = Items.get(position);
         Items.remove(position);
         String s = a.toString();

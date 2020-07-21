@@ -37,7 +37,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         try {
             mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            System.out.println("assigned problematic");
             e.printStackTrace();
         }
     }

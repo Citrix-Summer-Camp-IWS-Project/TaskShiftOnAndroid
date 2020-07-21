@@ -634,16 +634,15 @@ public class MainActivity extends AppCompatActivity {
         initializeAdapter();
         return InfoList;
     }
-    public void ChangeIssueAssignee(String username, String token, String Issue, String AssigneeID) throws InterruptedException {
+    public void ChangeIssueAssignee(String username, String token, String Issue, String AssigneeID) {
         //Use api to change issue assignee
-        final CountDownLatch latch = new CountDownLatch(1);
         String credential = Credentials.basic(username, token);
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create("{\r\n  \"accountId\": \"" +  AssigneeID + "\"\r\n}", mediaType);
         Request request = new Request.Builder()
                 .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/issue/" + Issue + "/assignee")
                 .method("PUT", body)
-                .addHeader("Authorization", "Basic eGVhbDNrQGdtYWlsLmNvbTpkSzlZZVllMzhLdU9mRURhY2Mwd0NDMzQ=")
+                .addHeader("Authorization", credential)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
                 .build();
@@ -653,16 +652,15 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Toast.makeText(getApplicationContext(), "Assign failed", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if(response.code() == 204){
-                    Toast.makeText(getApplicationContext(), "Assign succeeded", Toast.LENGTH_SHORT).show();
+
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Assign failed" + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
