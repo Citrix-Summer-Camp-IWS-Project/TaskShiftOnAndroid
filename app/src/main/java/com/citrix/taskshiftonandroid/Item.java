@@ -1,8 +1,11 @@
 package com.citrix.taskshiftonandroid;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
+
+import static java.nio.file.Paths.get;
 
 public class Item {
     String taskid;
@@ -17,6 +20,20 @@ public class Item {
         this.storyType = storyType;
     }
 
+    public static List<Item> initializeFromDictionary(List<Dictionary> itemDict) {
+        List<Item> Items;
+        Items = new ArrayList<>();
+        for (Dictionary<String, String> a: itemDict){
+            int type = 0;
+            if (a.get("Type") == "Epic") {
+                type = R.drawable.epic;
+            } else {
+                type = R.drawable.story;
+            }
+            Items.add(new Item(a.get("Task"), a.get("Summary"), R.drawable.icons8_jira_240, type));
+        }
+        return Items;
+    }
 
 
     //后续改循环
