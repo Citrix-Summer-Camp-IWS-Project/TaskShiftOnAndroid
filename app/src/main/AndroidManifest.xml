@@ -7,8 +7,10 @@
     <!-- If your app targets Android 9 or lower, you can declare
          ACCESS_COARSE_LOCATION instead. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Implement companion device pairing-->
     <uses-feature android:name="android.software.companion_device_setup"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

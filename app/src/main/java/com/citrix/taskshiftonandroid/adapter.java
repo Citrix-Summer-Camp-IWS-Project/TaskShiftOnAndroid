@@ -1,5 +1,6 @@
 package com.citrix.taskshiftonandroid;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,12 +50,14 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     //try to implement interface (listener)
 
     @Override
-    public void onItemDismiss(int position) throws IOException {
+    public void onItemDismiss(int position) throws IOException, InterruptedException {
         Item a = Items.get(position);
         Items.remove(position);
         String s = a.toString();
-        OutputStream os = MainActivity.getMainActivity().os;
-        MainActivity.getMainActivity().sendTS(s);
+        MainActivity main = MainActivity.getMainActivity();
+        OutputStream os = main.os;
+        main.sendTS(s);
+        main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
         notifyItemRemoved(position);
     }
     @Override

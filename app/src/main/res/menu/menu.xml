@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_add"
         android:orderInCategory="1"
-        android:title="add"
+        android:title="+新同事"
         app:showAsAction="ifRoom"></item>
 
     <item
