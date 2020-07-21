@@ -5,11 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,14 +49,13 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     //try to implement interface (listener)
 
     @Override
-    public void onItemDismiss(int position) {
+    public void onItemDismiss(int position) throws IOException {
+        Item a = Items.get(position);
         Items.remove(position);
+        String s = a.toString();
+        OutputStream os = MainActivity.getMainActivity().os;
+        MainActivity.getMainActivity().sendTS(s);
         notifyItemRemoved(position);
-
-        //Items.add(new Item("TS-6", "Investigate how blue tooth works on Android"
-        //       , R.drawable.icons8_jira_240, R.drawable.epic));
-        //detect the dynamic change in list
-        System.out.println("this is number of items" + Items.size());
     }
     @Override
     public void onItemMove(int from, int to) {
@@ -62,9 +64,8 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     }
     //interface above
 
-    public void remove(int position){
-        Items.remove(position);
-        notifyItemRemoved(position);
+    public void remove(int position) throws IOException {
+
     }
     public void add(int position,Item Item) {
         Items.add(position,Item);

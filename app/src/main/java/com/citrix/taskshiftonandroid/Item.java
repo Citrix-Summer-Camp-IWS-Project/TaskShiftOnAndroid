@@ -35,6 +35,22 @@ public class Item {
                 , R.drawable.icons8_jira_240, R.drawable.story));
         return Items;
     }
+
+    public String toString() {
+        return this.taskid + "//" + storySummary + "//" + String.valueOf(jiraLogo) + "//" + String.valueOf(storyType) + "//";
+    }
+
+    public static Item toItem(String s) {
+        String id = s.substring(0, s.indexOf("//"));
+        s = s.substring(s.indexOf("//") + 2);
+        String summary = s.substring(0, s.indexOf("//"));
+        s = s.substring(s.indexOf("//") + 2);
+        int Logo = Integer.parseInt(s.substring(0, s.indexOf("//")));
+        s = s.substring(s.indexOf("//") + 2);
+        int type = Integer.parseInt(s.substring(0, s.indexOf("//")));
+        return new Item(id, summary, Logo, type);
+    }
+
 }
 
 

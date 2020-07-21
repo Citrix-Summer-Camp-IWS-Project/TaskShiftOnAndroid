@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
+
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter mAdapter;
@@ -33,7 +35,11 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        try {
+            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //long press enable the card to drag(up and down)
