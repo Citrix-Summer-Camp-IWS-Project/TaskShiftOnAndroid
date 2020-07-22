@@ -59,12 +59,12 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     // Hardcode tokens
-    public String username = "xeal3k@gmail.com";
-    public String username1 = "carlostian927@berkeley.edu";
-    public String token = "dK9YeYe38KuOfEDacc0wCC34";
-    public String token1 = "DwNBtNVKteYVQd7MjNHF0250";
-    public String AccountID = "5f033116b545e200154e76f4";
-    public String AccountID1 = "5f03322ad6803200212f2dc0";
+    //public String username = "xeal3k@gmail.com";
+    public String username = "carlostian927@berkeley.edu";
+    //public String token = "dK9YeYe38KuOfEDacc0wCC34";
+    public String token = "DwNBtNVKteYVQd7MjNHF0250";
+    //public String AccountID = "5f033116b545e200154e76f4";
+    public String AccountID = "5f03322ad6803200212f2dc0";
 
 
 
@@ -405,33 +405,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public static Request Issue(String username, String token, String key) throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(1);
-        String credential = Credentials.basic(username, token);
-        Request request = new Request.Builder()
-                .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/issue/" + key)
-                .method("GET", null)
-                .addHeader("Authorization", credential)
-                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
-                .build();
 
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println("this is fail " + key);
-                latch.countDown();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                latch.countDown();
-            }
-        });
-        latch.await();
-        return request;
-    }
     public static List<String> ProjectKey(String username, String token) throws IOException, JSONException {
         /*
         Use API to all the project in json format
@@ -488,152 +462,100 @@ public class MainActivity extends AppCompatActivity {
         return list;
     }
 
-    public static List<String> GetAllIssue(String username, String token) throws IOException, JSONException, InterruptedException {
-        List<String> IssueList = new ArrayList<String>();
-        List<String> Pkey = ProjectKey(username, token);
-        List<Integer> status = new ArrayList<>();
-        status.add(0);
+    public List<Dictionary> GetAllIssueInfo(String username, String token) throws IOException, JSONException, InterruptedException {
+        List<Dictionary> infoList = new ArrayList<Dictionary>();
+        List<String> projectKey = ProjectKey(username, token);
+        List<String> issueList = new ArrayList<String>();
+        List<String> summaryList = new ArrayList<String>();
+        List<String> assigneeList = new ArrayList<String>();
+        List<String> statusList = new ArrayList<String>();
+        List<String> typeList = new ArrayList<String>();
 
+        final CountDownLatch iLatch = new CountDownLatch(issueList.size());
         OkHttpClient client = new OkHttpClient().newBuilder()
-                .connectTimeout(300, TimeUnit.SECONDS)
-                .writeTimeout(300, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
                 .build();
-        final CountDownLatch pLatch = new CountDownLatch(Pkey.size());
-        //If status code is 200, the issue exists
-        //If status code is not 200, the issue is not exist
-        //Find all issue based on Project key
-        for(int i = 0; i < Pkey.size(); i++){
-            String key = Pkey.get(i);
-            int j = 1;
+
+        final CountDownLatch pLatch = new CountDownLatch(projectKey.size());
+        for(int i = 0; i < projectKey.size(); i++) {
             final CountDownLatch latch = new CountDownLatch(1);
-            Request request = Issue(username, token, key + "-" + String.valueOf(j));
-            int finalJ = j;
-            client.newCall(request).enqueue(new Callback() {
+            String key = projectKey.get(i);
+            String credential = Credentials.basic(username, token);
+            Request request = new Request.Builder()
+                    .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/search?jql=project=" + key)
+                    .method("GET", null)
+                    .addHeader("Authorization", credential)
+                    .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
+                    .build();
+
+            client.newCall(request).enqueue(new Callback(){
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     latch.countDown();
                 }
 
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    status.set(0, response.code());
+                    String emailAddress = "";
+                    try {
+                        JSONObject JsonObj = new JSONObject(response.body().string());
+                        JSONArray jsonArr = (JSONArray) JsonObj.get("issues");
+                        for (int i = 0; i < jsonArr.length(); i++) {
+                            JSONObject jsonObj = jsonArr.getJSONObject(i);
+                            JSONObject fields = (JSONObject) jsonObj.get("fields");
+
+                            String tKey = (String) jsonObj.get("key");
+                            //System.out.println("this is " + tKey);
+                            issueList.add(tKey);
+
+                            String summary = (String) jsonObj.get("key");
+                            summaryList.add(summary);
+
+                            JSONObject issueType = (JSONObject) fields.get("issuetype");
+                            String name = (String) issueType.get("name");
+                            typeList.add(name);
+
+                            JSONObject status = (JSONObject) fields.get("status");
+                            String statusName = (String) status.get("name");
+                            statusList.add(statusName);
+
+                            try{
+                                JSONObject assignee = (JSONObject) fields.get("assignee");
+                                emailAddress = (String) assignee.get("emailAddress");
+                            } catch ( Exception e){
+                                emailAddress = "No assignee";
+                            }
+                            assigneeList.add(emailAddress);
+                        }
+                    } catch (JSONException e) {
+                        System.out.println("this is error");
+                        e.printStackTrace();
+                    }
                     latch.countDown();
                 }
             });
             latch.await();
-            while(status.get(0) == 200){
-                IssueList.add(key + "-" + String.valueOf(j));
-                final CountDownLatch newLatch = new CountDownLatch(1);
-                j ++;
-                request = Issue(username, token, key + "-" + String.valueOf(j));
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        newLatch.countDown();
-                    }
-
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        status.set(0, response.code());
-                        newLatch.countDown();
-                    }
-                });
-                newLatch.await();
-            }
             pLatch.countDown();
         }
         pLatch.await();
-        return IssueList;
-    }
+        System.out.println("this is " + (issueList.size() == statusList.size()));
 
-    public List<Dictionary> GetAllIssueInfo(String username, String token) throws JSONException, InterruptedException, IOException {
-        List<Dictionary> InfoList = new ArrayList<Dictionary>();
-        List<String> IssueList = GetAllIssue(username, token);
-        List<String> SummaryList = new ArrayList<String>();
-        List<String> AssigneeList = new ArrayList<String>();
-        List<String> StatusList = new ArrayList<String>();
-        List<String> TypeList = new ArrayList<String>();
-
-        final CountDownLatch iLatch = new CountDownLatch(IssueList.size());
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .connectTimeout(300, TimeUnit.SECONDS)
-                .writeTimeout(300, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
-                .build();
-        System.out.println("this is start3");
-        //Iterate over all issues and get assignees
-        for(int i = 0; i < IssueList.size(); i++){
-            final CountDownLatch newLatch = new CountDownLatch(1);
-            String Issue = IssueList.get(i);
-            //System.out.println(key + "-" +String.valueOf(j));
-            Request request = Issue(username, token, Issue);
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    newLatch.countDown();
-                }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    JSONObject JsonObj = null;
-                    JSONObject field = null;
-                    String DisplayName = "";
-                    JSONObject assignee = null;
-                    try {
-                        JsonObj = new JSONObject(response.body().string());
-                        field = (JSONObject) JsonObj.get("fields");
-
-                        JSONObject IssueType = (JSONObject) field.get("issuetype");
-                        String name = (String) IssueType.get("name");
-                        TypeList.add(name);
-
-                        JSONObject status = (JSONObject) field.get("status");
-                        String statusName = (String) status.get("name");
-                        StatusList.add(statusName);
-
-                        String Summary = (String) field.get("summary");
-                        SummaryList.add(Summary);
-
-                        assignee = (JSONObject) field.get("assignee");
-                        DisplayName = (String) assignee.get("emailAddress");
-                    } catch (JSONException e) {
-                        DisplayName = "No assignee";
-                    }catch(Exception e){
-                        DisplayName = "No assignee";
-                    }
-                    AssigneeList.add(DisplayName);
-
-                    newLatch.countDown();
-                    response.close();
-                }
-            });
-            newLatch.await();
-            iLatch.countDown();
-            //System.out.println("this is iLatch " + iLatch);
-        }
-        iLatch.await();
-        System.out.println("this is start4");
-
-        for(int i = 0; i < IssueList.size(); i++){
-            System.out.println("this is " + AssigneeList.get(i));
-            if(AssigneeList.get(i).equals(username)){
-                if(! StatusList.get(i).equals("Done")){
+        for(int j = 0; j < issueList.size(); j++){
+            if(assigneeList.get(j).equals(username)){
+                if( ! statusList.get(j).equals("Done")){
                     Dictionary Info = new Hashtable();
-                    Info.put("Type", TypeList.get(i));
-                    Info.put("Status", StatusList.get(i));
-                    Info.put("Summary", SummaryList.get(i));
-                    Info.put("Assignee", AssigneeList.get(i));
-                    Info.put("Task", IssueList.get(i));
-                    InfoList.add(Info);
+                    Info.put("Type", typeList.get(j));
+                    Info.put("Status", statusList.get(j));
+                    Info.put("Summary", summaryList.get(j));
+                    Info.put("Assignee", assigneeList.get(j));
+                    Info.put("Task", issueList.get(j));
+                    infoList.add(Info);
                 }
             }
         }
-        Items = Item.initializeFromDictionary(InfoList);
-        initializeAdapter();
-        return InfoList;
+        return infoList;
     }
+
     public void ChangeIssueAssignee(String username, String token, String Issue, String AssigneeID) {
         //Use api to change issue assignee
         String credential = Credentials.basic(username, token);
