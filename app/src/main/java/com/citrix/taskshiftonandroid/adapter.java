@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,22 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card, viewGroup, false);
         CardViewHolder cvh = new CardViewHolder(v);
+        cvh.startBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //add code here for startButton
+            }
+        });
+        cvh.doneBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //add code here for doneButton
+            }
+        });
+
+
+
+
         return cvh;
     }
 
@@ -34,6 +51,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         cardViewHolder.taskSummary.setText(Items.get(i).storySummary);
         cardViewHolder.jira.setImageResource(Items.get(i).jiraLogo);
         cardViewHolder.storyType.setImageResource(Items.get(i).storyType);
+
     }
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -65,7 +83,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         Collections.swap(Items, from, to);
         notifyItemMoved(from, to);
     }
-    //interface above
 
     public void remove(int position) throws IOException {
 
@@ -84,6 +101,8 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         TextView taskSummary;
         ImageView jira;
         ImageView storyType;
+        Button startBut;
+        Button doneBut;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -92,6 +111,9 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             taskSummary = (TextView)itemView.findViewById(R.id.summary);
             jira = (ImageView)itemView.findViewById(R.id.jira);
             storyType = (ImageView)itemView.findViewById(R.id.storyType);
+            startBut = (Button) itemView.findViewById(R.id.startButton);
+            doneBut = (Button) itemView.findViewById(R.id.doneButton);
+
         }
     }
 

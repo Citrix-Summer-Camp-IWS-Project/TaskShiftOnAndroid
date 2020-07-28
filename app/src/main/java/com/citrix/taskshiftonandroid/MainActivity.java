@@ -555,6 +555,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Items = Item.initializeFromDictionary(infoList);
         initializeAdapter();
+
         return infoList;
     }
 
