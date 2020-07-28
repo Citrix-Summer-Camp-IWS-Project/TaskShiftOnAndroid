@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
                             //System.out.println("this is " + tKey);
                             issueList.add(tKey);
 
-                            String summary = (String) jsonObj.get("key");
+                            String summary = (String) fields.get("summary");
                             summaryList.add(summary);
 
                             JSONObject issueType = (JSONObject) fields.get("issuetype");
