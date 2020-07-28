@@ -35,6 +35,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             @Override
             public void onClick(View view) {
                 //add code here for doneButton
+                
             }
         });
 
