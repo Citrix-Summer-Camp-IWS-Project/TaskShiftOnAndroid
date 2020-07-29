@@ -29,12 +29,14 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             @Override
             public void onClick(View view) {
                 //add code here for startButton
+                System.out.println("success start button");
             }
         });
         cvh.doneBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //add code here for doneButton
+                System.out.println("success done button");
                 
             }
         });
