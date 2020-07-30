@@ -15,7 +15,10 @@ jobs:
       uses: actions/checkout@v2
     - name: Build
       run: ./gradlew build
-    - name: Android Test
-      run: ./gradlew connectedAndroidTest
+    - name: Android test
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 28
+        script: ./gradlew connectedAndroidTest
     - name: Coverage
       run: ./gradlew createDebugAndroidTestCoverageReport
