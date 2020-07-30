@@ -102,43 +102,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
-        initializeBluetooth();
-        ac = new AcceptThread();
-        ac.start();
-        connectForPaired();
-
-        try {
-            List<Dictionary> info = GetAllIssueInfo(username, token);
-            System.out.println("this is start2");
-            System.out.println("this is info" + info);
-            /*
-            for(int i = 0; i < info.size(); i++){
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String json = gson.toJson(info.get(i));
-                System.out.println("this is " + json );
-            }
-
-             */
-        } catch (JSONException e) {
-            System.out.println("this is error");
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            System.out.println("this is error");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("this is error");
-            e.printStackTrace();
-        }
-
-
-
-        RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
-        //data
-
-        //initiate recycle view
-        //define the width of divider
-        int space = 2;
-        rv.addItemDecoration(new SpacesItemDecoration(space));
+//        initializeBluetooth();
+//        ac = new AcceptThread();
+//        ac.start();
+//        connectForPaired();
+//
+//        try {
+//            List<Dictionary> info = GetAllIssueInfo(username, token);
+//            System.out.println("this is start2");
+//            System.out.println("this is info" + info);
+//            /*
+//            for(int i = 0; i < info.size(); i++){
+//                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//                String json = gson.toJson(info.get(i));
+//                System.out.println("this is " + json );
+//            }
+//
+//             */
+//        } catch (JSONException e) {
+//            System.out.println("this is error");
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            System.out.println("this is error");
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            System.out.println("this is error");
+//            e.printStackTrace();
+//        }
+//
+//
+//
+//        RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
+//        //data
+//
+//        //initiate recycle view
+//        //define the width of divider
+//        int space = 2;
+//        rv.addItemDecoration(new SpacesItemDecoration(space));
 
         //final adapter adapter = new adapter(Items);
         //这里我们选择创建一个LinearLayoutManager
