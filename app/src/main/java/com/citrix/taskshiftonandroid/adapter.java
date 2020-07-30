@@ -28,7 +28,10 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         cvh.startBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //add code here for startButton
+                int position = cvh.getAdapterPosition();
+                MainActivity main = MainActivity.getMainActivity();
+                Item a = Items.get(position);
+                main.ChangeIssueStatus(main.username,main.token, a.taskid, "21");
                 System.out.println("success start button");
             }
         });
@@ -36,6 +39,12 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             @Override
             public void onClick(View view) {
                 //add code here for doneButton
+                int position = cvh.getAdapterPosition();
+                MainActivity main = MainActivity.getMainActivity();
+                Item a = Items.get(position);
+                main.ChangeIssueStatus(main.username,main.token, a.taskid, "31");
+                Items.remove(position);
+                notifyItemRemoved(position);
                 System.out.println("success done button");
                 
             }

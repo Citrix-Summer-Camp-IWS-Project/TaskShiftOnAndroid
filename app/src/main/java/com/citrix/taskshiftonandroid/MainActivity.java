@@ -59,7 +59,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     // Hardcode tokens
-    public String username = "xeal3k@gmail.com";
+    public String username = "xeal3k@gmail.com"; 
     public String token = "dK9YeYe38KuOfEDacc0wCC34";
     public String AccountID = "5f033116b545e200154e76f4";
 //    public String username = "carlostian927@berkeley.edu";
@@ -102,10 +102,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
-        //initializeBluetooth();
-        //ac = new AcceptThread();
-        //ac.start();
-        //connectForPaired();
+        initializeBluetooth();
+        ac = new AcceptThread();
+        ac.start();
+        connectForPaired();
 
         try {
             List<Dictionary> info = GetAllIssueInfo(username, token);
@@ -589,5 +589,43 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void ChangeIssueStatus(String username, String token, String issue, String status){
+        //Use api to change issue status
+        //11 is To do, 21 is In Progress, 31 is Done
+        String credential = Credentials.basic(username, token);
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create("{  \r\n   \"transition\":" +
+                "{  \r\n      \"id\":\"" + status + "\"\r\n   }\r\n}",mediaType);
+        Request request = new Request.Builder()
+                .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/issue/" + issue +
+                        "/transitions?expand=transitions.fields")
+                .method("POST", body)
+                .addHeader("Authorization", credential)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
+                .build();
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Assign failed");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if(response.code() == 204){
+                    System.out.println("Status Change succeeded");
+                }
+                else{
+                    System.out.println("Assign failed" + response.code());
+                }
+            }
+        });
+    }
+    public void toastMsg(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 }
