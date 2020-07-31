@@ -65,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
 //    public String username = "carlostian927@berkeley.edu";
 //    public String token = "DwNBtNVKteYVQd7MjNHF0250";
 //    public String AccountID = "5f03322ad6803200212f2dc0";
-
+    public String ToDo = "11";
+    public String InProgress = "21";
+    public String Done = "31";
 
 
     private List<Item> Items;
@@ -594,8 +596,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ChangeIssueStatus(String username, String token, String issue, String status){
-        //Use api to change issue status
-        //11 is To do, 21 is In Progress, 31 is Done
         String credential = Credentials.basic(username, token);
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create("{  \r\n   \"transition\":" +
