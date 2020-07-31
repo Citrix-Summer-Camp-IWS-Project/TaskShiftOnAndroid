@@ -102,10 +102,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
-        initializeBluetooth();
-        ac = new AcceptThread();
-        ac.start();
-        connectForPaired();
+        if (BluetoothAdapter.getDefaultAdapter() !=null) {
+            initializeBluetooth();
+            ac = new AcceptThread();
+            ac.start();
+            connectForPaired();
+        }
 
         try {
             List<Dictionary> info = GetAllIssueInfo(username, token);
