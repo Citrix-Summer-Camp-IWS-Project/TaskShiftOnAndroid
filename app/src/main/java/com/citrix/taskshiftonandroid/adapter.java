@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implements ItemTouchHelperAdapter {
-
+    public String ToDo = "11";
+    public String InProgress = "21";
+    public String Done = "31";
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -28,15 +30,23 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         cvh.startBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //add code here for startButton
-
-                System.out.println("success start button" + cvh.getAdapterPosition());
+                int position = cvh.getAdapterPosition();
+                MainActivity main = MainActivity.getMainActivity();
+                Item a = Items.get(position);
+                main.ChangeIssueStatus(main.username,main.token, a.taskid, InProgress);
+                System.out.println("success start button");
             }
         });
         cvh.doneBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //add code here for doneButton
+                int position = cvh.getAdapterPosition();
+                MainActivity main = MainActivity.getMainActivity();
+                Item a = Items.get(position);
+                main.ChangeIssueStatus(main.username,main.token, a.taskid, Done);
+                Items.remove(position);
+                notifyItemRemoved(position);
                 System.out.println("success done button");
                 
             }

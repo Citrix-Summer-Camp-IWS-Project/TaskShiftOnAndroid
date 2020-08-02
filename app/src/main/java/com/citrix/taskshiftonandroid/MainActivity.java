@@ -67,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
 //    public String username = "carlostian927@berkeley.edu";
 //    public String token = "DwNBtNVKteYVQd7MjNHF0250";
 //    public String AccountID = "5f03322ad6803200212f2dc0";
-
+    public String ToDo = "11";
+    public String InProgress = "21";
+    public String Done = "31";
 
 
     private List<Item> Items;
@@ -105,10 +107,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.loadingview);
         setContentView(R.layout.recycleviewlisttest);
-
-        System.out.println("before MainActivity is starting");
         //initializeBluetooth();
         //ac = new AcceptThread();
         //ac.start();
@@ -148,20 +147,19 @@ public class MainActivity extends AppCompatActivity {
 //        myItemAnimator = new Animation();
 //        myItemAnimator.setRemoveDuration(2000);
 //        myRecyclerVIew.setItemAnimator(myItemAnimator);
-        System.out.println("before onCreate finish");
-    }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus)
-    {
-        if(hasFocus) {
-            System.out.println("before activity loading finish");
-            Launch.Launch.finish();
+    }
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus)
+        {
+            if(hasFocus) {
+                System.out.println("before activity loading finish");
+                Launch.Launch.finish();
 //            rv.setVisibility(View.VISIBLE);
 //            ProgressBar loadingView = (ProgressBar) findViewById(R.id.circle);
 //            loadingView.setVisibility(View.GONE);
-        }
-    }
+            }
+            }
     private void initializeAdapter(){
         adapter = new adapter(Items);
 
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
     }
@@ -366,8 +363,6 @@ public class MainActivity extends AppCompatActivity {
                 Items.add(added);
                 super.handleMessage(msg);
                 adapter.notifyItemInserted(Items.size() - 1);
-                //test code running line
-                System.out.println("this is number of items inside handler ");
             }
         }
     };
@@ -477,8 +472,6 @@ public class MainActivity extends AppCompatActivity {
         List<String> statusList = new ArrayList<String>();
         List<String> typeList = new ArrayList<String>();
 
-
-
         final CountDownLatch iLatch = new CountDownLatch(issueList.size());
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -562,8 +555,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Items = Item.initializeFromDictionary(infoList);
-        //adapter = new adapter(Items);
-        //rv.setAdapter(adapter);
         initializeAdapter();
 
         return infoList;
@@ -599,5 +590,41 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void ChangeIssueStatus(String username, String token, String issue, String status){
+        String credential = Credentials.basic(username, token);
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create("{  \r\n   \"transition\":" +
+                "{  \r\n      \"id\":\"" + status + "\"\r\n   }\r\n}",mediaType);
+        Request request = new Request.Builder()
+                .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/issue/" + issue +
+                        "/transitions?expand=transitions.fields")
+                .method("POST", body)
+                .addHeader("Authorization", credential)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
+                .build();
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Assign failed");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if(response.code() == 204){
+                    System.out.println("Status Change succeeded");
+                }
+                else{
+                    System.out.println("Assign failed" + response.code());
+                }
+            }
+        });
+    }
+    public void toastMsg(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 }
