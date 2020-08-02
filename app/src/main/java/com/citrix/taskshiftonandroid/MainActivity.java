@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -29,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Item> Items;
     private RecyclerView rv;
     private adapter adapter;
+    private ProgressBar loadingView;
+    private ProgressDialog pd;
 
     short rssi;
     //客户端服务端一体
@@ -101,7 +105,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setContentView(R.layout.loadingview);
         setContentView(R.layout.recycleviewlisttest);
+
+        System.out.println("before MainActivity is starting");
         //initializeBluetooth();
         //ac = new AcceptThread();
         //ac.start();
@@ -133,43 +140,40 @@ public class MainActivity extends AppCompatActivity {
 
 
         RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
-        //data
-
         //initiate recycle view
         //define the width of divider
         int space = 2;
         rv.addItemDecoration(new SpacesItemDecoration(space));
 
-        //final adapter adapter = new adapter(Items);
-        //这里我们选择创建一个LinearLayoutManager
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //为RecyclerView对象指定我们创建得到的layoutManager
-        //rv.setLayoutManager(layoutManager);
-        //rv.setAdapter(adapter);
-//
-//        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-//        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-//        touchHelper.attachToRecyclerView(rv);
-
-        //test
-        //ItemTouchHelper data = touchHelper;
-
 //        myItemAnimator = new Animation();
 //        myItemAnimator.setRemoveDuration(2000);
 //        myRecyclerVIew.setItemAnimator(myItemAnimator);
+        System.out.println("before onCreate finish");
+    }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        if(hasFocus) {
+            System.out.println("before activity loading finish");
+            Launch.Launch.finish();
+//            rv.setVisibility(View.VISIBLE);
+//            ProgressBar loadingView = (ProgressBar) findViewById(R.id.circle);
+//            loadingView.setVisibility(View.GONE);
+        }
     }
     private void initializeAdapter(){
         adapter = new adapter(Items);
 
-        RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
+        rv = (RecyclerView) findViewById(R.id.tasklist);
+        //rv.setVisibility(View.GONE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //为RecyclerView对象指定我们创建得到的layoutManager
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
     }
@@ -184,11 +188,11 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-    //menu button test
+    //menu button
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        //根据不同的id点击不同按钮控制activity需要做的事件
+        //Button function
         switch (item.getItemId())
         {
             case R.id.action_add:
@@ -362,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
                 Items.add(added);
                 super.handleMessage(msg);
                 adapter.notifyItemInserted(Items.size() - 1);
+                //test code running line
+                System.out.println("this is number of items inside handler ");
             }
         }
     };
@@ -471,6 +477,8 @@ public class MainActivity extends AppCompatActivity {
         List<String> statusList = new ArrayList<String>();
         List<String> typeList = new ArrayList<String>();
 
+
+
         final CountDownLatch iLatch = new CountDownLatch(issueList.size());
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -554,6 +562,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Items = Item.initializeFromDictionary(infoList);
+        //adapter = new adapter(Items);
+        //rv.setAdapter(adapter);
         initializeAdapter();
 
         return infoList;

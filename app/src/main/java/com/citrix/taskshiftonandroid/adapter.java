@@ -29,7 +29,8 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             @Override
             public void onClick(View view) {
                 //add code here for startButton
-                System.out.println("success start button");
+
+                System.out.println("success start button" + cvh.getAdapterPosition());
             }
         });
         cvh.doneBut.setOnClickListener(new View.OnClickListener() {
