@@ -12,6 +12,7 @@ public class Launch extends AppCompatActivity {
 
     public static Activity Launch;
 
+    private Account account;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,16 +20,18 @@ public class Launch extends AppCompatActivity {
         Launch = this;
         Handler handler = new Handler();
 
-        System.out.println("before start 1activity");
 
         handler.postDelayed(new splashhandler(), 200);//延迟执行splashhandler线程
-    }
+
+}
 
     class splashhandler implements Runnable{
         public void run() {
             //launch main activity
             System.out.println("before start activity");
-            startActivity(new Intent(getApplication(),MainActivity.class));
+            account = (Account) getApplication();
+
+            startActivity(new Intent(Launch.this,MainActivity.class));
             //Launch.this.finish();// 把当前的LaunchActivity结束掉
         }
     }

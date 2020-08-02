@@ -2,7 +2,6 @@ package com.citrix.taskshiftonandroid;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +28,6 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -60,10 +58,14 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Account Account;
+    public String username;
+    public String token;
+    public String AccountID;
     // Hardcode tokens
-    public String username = "xeal3k@gmail.com";
-    public String token = "dK9YeYe38KuOfEDacc0wCC34";
-    public String AccountID = "5f033116b545e200154e76f4";
+//    public String username = "xeal3k@gmail.com";
+//    public String token = "dK9YeYe38KuOfEDacc0wCC34";
+//    public String AccountID = "5f033116b545e200154e76f4";
 //    public String username = "carlostian927@berkeley.edu";
 //    public String token = "DwNBtNVKteYVQd7MjNHF0250";
 //    public String AccountID = "5f03322ad6803200212f2dc0";
@@ -112,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
         //ac = new AcceptThread();
         //ac.start();
         //connectForPaired();
+        Account = (Account) getApplication();
+        username=Account.getUsername();
+        token = Account.getToken();
+        AccountID = Account.getAccountID();
+
+
+
 
         try {
             List<Dictionary> info = GetAllIssueInfo(username, token);
@@ -154,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         {
             if(hasFocus) {
                 System.out.println("before activity loading finish");
-                Launch.Launch.finish();
+                //Launch.Launch.finish();
 //            rv.setVisibility(View.VISIBLE);
 //            ProgressBar loadingView = (ProgressBar) findViewById(R.id.circle);
 //            loadingView.setVisibility(View.GONE);
@@ -221,10 +230,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_remove:
                 //事件
-                Items.remove(0);
-                adapter.notifyItemRemoved(0);
-                System.out.println("this is bug???");
-
+                Intent intent = new Intent(this,Login.class);
+                startActivity(intent);
                 break;
         }
         return true;
