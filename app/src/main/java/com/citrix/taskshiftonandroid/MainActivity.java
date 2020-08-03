@@ -118,9 +118,7 @@ public class MainActivity extends AppCompatActivity {
         username=Account.getUsername();
         token = Account.getToken();
         AccountID = Account.getAccountID();
-
-
-
+        
 
         try {
             List<Dictionary> info = GetAllIssueInfo(username, token);
