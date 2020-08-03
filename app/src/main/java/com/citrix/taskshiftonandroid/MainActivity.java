@@ -28,7 +28,10 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         username=Account.getUsername();
         token = Account.getToken();
         AccountID = Account.getAccountID();
-        
+
 
         try {
             List<Dictionary> info = GetAllIssueInfo(username, token);
@@ -196,40 +199,51 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean onOptionsItemSelected(MenuItem item)
     {
+
+        TextView tv = (TextView) findViewById(R.id.name);
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        //MenuItem TL = (MenuItem) findViewById(R.id.flavor);
         //Button function
         switch (item.getItemId())
         {
             case R.id.action_add:
+//
+                //Button remove = findViewById(R.id.action_remove);
+                iv.setVisibility(View.GONE);
+                tv.setVisibility(View.GONE);
+//                TL.(View.GONE);
+//                deviceManager = getSystemService(CompanionDeviceManager.class);
+//                deviceFilter = new BluetoothDeviceFilter.Builder().build();
+//                pairingRequest = new AssociationRequest.Builder()
+//                        .addDeviceFilter(deviceFilter)
+//                        .setSingleDevice(false)
+//                        .build();
+//                deviceManager.associate(pairingRequest,
+//                        new CompanionDeviceManager.Callback() {
+//                            @Override
+//                            public void onDeviceFound(IntentSender chooserLauncher) {
+//                                try {
+//                                    startIntentSenderForResult(chooserLauncher,
+//                                            SELECT_DEVICE_REQUEST_CODE, null, 0, 0, 0);
+//                                } catch (IntentSender.SendIntentException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(CharSequence charSequence) {
+//
+//                            }
+//                        },
+//                        null);
 
-                deviceManager = getSystemService(CompanionDeviceManager.class);
-                deviceFilter = new BluetoothDeviceFilter.Builder().build();
-                pairingRequest = new AssociationRequest.Builder()
-                        .addDeviceFilter(deviceFilter)
-                        .setSingleDevice(false)
-                        .build();
-                deviceManager.associate(pairingRequest,
-                        new CompanionDeviceManager.Callback() {
-                            @Override
-                            public void onDeviceFound(IntentSender chooserLauncher) {
-                                try {
-                                    startIntentSenderForResult(chooserLauncher,
-                                            SELECT_DEVICE_REQUEST_CODE, null, 0, 0, 0);
-                                } catch (IntentSender.SendIntentException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(CharSequence charSequence) {
-
-                            }
-                        },
-                        null);
                 break;
             case R.id.action_remove:
-                //事件
-                Intent intent = new Intent(this,Login.class);
-                startActivity(intent);
+//                事件
+                tv.setVisibility(View.VISIBLE);
+                iv.setVisibility(View.VISIBLE);
+//                Intent intent = new Intent(this,Login.class);
+//                startActivity(intent);
                 break;
         }
         return true;

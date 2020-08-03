@@ -6,13 +6,24 @@
     <item
         android:id="@+id/action_add"
         android:orderInCategory="1"
-        android:title="+新同事"
+        android:title="test"
         app:showAsAction="ifRoom"></item>
-
     <item
         android:id="@+id/action_remove"
         android:orderInCategory="2"
-        android:title="Switch Users"
-        app:showAsAction="ifRoom" />
+        android:title="test"
+        app:showAsAction="ifRoom"></item>
+<!--    <item-->
+<!--        android:id="@+id/action_remove"-->
+<!--        android:orderInCategory="2"-->
+<!--        android:title="test"-->
+<!--        app:showAsAction="ifRoom" />-->
+    <item
+        android:id="@+id/flavor"
+        android:orderInCategory="3"
+        android:title=""
+        app:actionLayout="@layout/menuitem"
+        app:showAsAction="always" />
+
 
 </menu>
