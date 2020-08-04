@@ -22,6 +22,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     public String ToDo = "11";
     public String InProgress = "21";
     public String Done = "31";
+    public MainActivity main;
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -31,7 +32,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             @Override
             public void onClick(View view) {
                 int position = cvh.getAdapterPosition();
-                MainActivity main = MainActivity.getMainActivity();
                 Item a = Items.get(position);
                 main.ChangeIssueStatus(main.username,main.token, a.taskid, InProgress);
                 System.out.println("success start button");
@@ -42,7 +42,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             public void onClick(View view) {
                 //add code here for doneButton
                 int position = cvh.getAdapterPosition();
-                MainActivity main = MainActivity.getMainActivity();
                 Item a = Items.get(position);
                 main.ChangeIssueStatus(main.username,main.token, a.taskid, Done);
                 Items.remove(position);
@@ -86,7 +85,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         Item a = Items.get(position);
         Items.remove(position);
         String s = a.toString();
-        MainActivity main = MainActivity.getMainActivity();
         OutputStream os = main.os;
         main.sendTS(s);
         main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
@@ -106,8 +104,9 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         notifyItemInserted(position);
     }
 
-    adapter(List<Item> Items){
+    adapter(List<Item> Items, MainActivity main){
         this.Items = Items;
+        this.main = main;
     }
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;

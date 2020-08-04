@@ -62,13 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public String username;
     public String token;
     public String AccountID;
-    // Hardcode tokens
-    public String username = "xeal3k@gmail.com";
-    public String token = "dK9YeYe38KuOfEDacc0wCC34";
-    public String AccountID = "5f033116b545e200154e76f4";
-//    public String username = "carlostian927@berkeley.edu";
-//    public String token = "DwNBtNVKteYVQd7MjNHF0250";
-//    public String AccountID = "5f03322ad6803200212f2dc0";
+
     public String ToDo = "11";
     public String InProgress = "21";
     public String Done = "31";
@@ -99,13 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBlueAdapter;
     DynamicReceiver dynamicReceiver = new DynamicReceiver();
-    private static MainActivity mainActivity;
-    public static MainActivity getMainActivity() {
-        return mainActivity;
-    }
-    public MainActivity() {
-        mainActivity = this;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             }
             }
     private void initializeAdapter(){
-        adapter = new adapter(Items);
+        adapter = new adapter(Items, this);
 
         rv = (RecyclerView) findViewById(R.id.tasklist);
         //rv.setVisibility(View.GONE);
