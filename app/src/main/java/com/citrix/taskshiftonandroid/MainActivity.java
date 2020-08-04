@@ -59,7 +59,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     // Hardcode tokens
-    public String username = "xeal3k@gmail.com"; 
+    public String username = "xeal3k@gmail.com";
     public String token = "dK9YeYe38KuOfEDacc0wCC34";
     public String AccountID = "5f033116b545e200154e76f4";
 //    public String username = "carlostian927@berkeley.edu";
@@ -567,13 +567,13 @@ public class MainActivity extends AppCompatActivity {
         //Use api to change issue assignee
         String credential = Credentials.basic(username, token);
         MediaType mediaType = MediaType.parse("application/json");
+        String json = "{accountId: " + AssigneeID  + "}";
         RequestBody body = RequestBody.create("{\r\n  \"accountId\": \"" +  AssigneeID + "\"\r\n}", mediaType);
         Request request = new Request.Builder()
                 .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/issue/" + Issue + "/assignee")
                 .method("PUT", body)
                 .addHeader("Authorization", credential)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
                 .build();
 
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -606,7 +606,6 @@ public class MainActivity extends AppCompatActivity {
                 .method("POST", body)
                 .addHeader("Authorization", credential)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
                 .build();
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
