@@ -12,7 +12,7 @@
     <item
         android:id="@+id/action_remove"
         android:orderInCategory="2"
-        android:title="delete"
+        android:title="Switch Users"
         app:showAsAction="ifRoom" />
 
 </menu>

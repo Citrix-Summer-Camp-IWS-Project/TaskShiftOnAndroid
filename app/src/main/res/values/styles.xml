@@ -44,6 +44,10 @@
         <item name="cardCornerRadius">2dp</item>
     </style>
 
+    //progressbar
+    <style name="CircularProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/progressbar</item>
+    </style>
 
     //button更新_test
     <style name="Widget.MaterialComponents.Button.TextButton.Dialog">
@@ -53,6 +57,14 @@
         <item name="android:singleLine">true</item>
         <item name="android:layout_marginStart">@dimen/mtrl_btn_text_btn_padding_left</item>
         <item name="android:layout_marginLeft">@dimen/mtrl_btn_text_btn_padding_left</item>
+    </style>
+
+    <style name="MyAppTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>//保证背景透明
+    </style>
+
+    <style name="activityTheme" parent="@android:style/Theme">
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>
