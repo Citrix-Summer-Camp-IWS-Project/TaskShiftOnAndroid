@@ -112,28 +112,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-            List<Dictionary> info = GetAllIssueInfo(username, token);
-            System.out.println("this is start2");
-            System.out.println("this is info" + info);
-            /*
-            for(int i = 0; i < info.size(); i++){
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String json = gson.toJson(info.get(i));
-                System.out.println("this is " + json );
-            }
-
-             */
-        } catch (JSONException e) {
-            System.out.println("this is error");
-            e.printStackTrace();
+                initializeAdapter();
         } catch (InterruptedException e) {
             System.out.println("this is error");
             e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("this is error");
-            e.printStackTrace();
         }
-
 
 
         RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
@@ -158,7 +141,8 @@ public class MainActivity extends AppCompatActivity {
 //            loadingView.setVisibility(View.GONE);
             }
             }
-    private void initializeAdapter(){
+    private void initializeAdapter() throws InterruptedException {
+        Items = getAllIssueInfo(username, token);
         adapter = new adapter(Items, this);
 
         rv = (RecyclerView) findViewById(R.id.tasklist);
@@ -459,101 +443,78 @@ public class MainActivity extends AppCompatActivity {
         return list;
     }
 
-    public List<Dictionary> GetAllIssueInfo(String username, String token) throws IOException, JSONException, InterruptedException {
-        List<Dictionary> infoList = new ArrayList<Dictionary>();
-        List<String> projectKey = ProjectKey(username, token);
-        List<String> issueList = new ArrayList<String>();
-        List<String> summaryList = new ArrayList<String>();
-        List<String> assigneeList = new ArrayList<String>();
-        List<String> statusList = new ArrayList<String>();
-        List<String> typeList = new ArrayList<String>();
-
-        final CountDownLatch iLatch = new CountDownLatch(issueList.size());
+    public List<Item> getAllIssueInfo(String username, String token) throws InterruptedException {
+        List<Item> itemList = new ArrayList<Item>();
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
 
-        final CountDownLatch pLatch = new CountDownLatch(projectKey.size());
-        for(int i = 0; i < projectKey.size(); i++) {
-            final CountDownLatch latch = new CountDownLatch(1);
-            String key = projectKey.get(i);
-            String credential = Credentials.basic(username, token);
-            Request request = new Request.Builder()
-                    .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/search?jql=project=" + key)
-                    .method("GET", null)
-                    .addHeader("Authorization", credential)
-                    .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
-                    .build();
+        final CountDownLatch latch = new CountDownLatch(1);
+        String key = "MD";
+        String credential = Credentials.basic(username, token);
+        Request request = new Request.Builder()
+                .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/search?jql=project=" + key)
+                .method("GET", null)
+                .addHeader("Authorization", credential)
+                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
+                .build();
 
-            client.newCall(request).enqueue(new Callback(){
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    latch.countDown();
-                }
-
-                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    String emailAddress = "";
-                    try {
-                        JSONObject JsonObj = new JSONObject(response.body().string());
-                        JSONArray jsonArr = (JSONArray) JsonObj.get("issues");
-                        for (int i = 0; i < jsonArr.length(); i++) {
-                            JSONObject jsonObj = jsonArr.getJSONObject(i);
-                            JSONObject fields = (JSONObject) jsonObj.get("fields");
-
-                            String tKey = (String) jsonObj.get("key");
-                            //System.out.println("this is " + tKey);
-                            issueList.add(tKey);
-
-                            String summary = (String) fields.get("summary");
-                            summaryList.add(summary);
-
-                            JSONObject issueType = (JSONObject) fields.get("issuetype");
-                            String name = (String) issueType.get("name");
-                            typeList.add(name);
-
-                            JSONObject status = (JSONObject) fields.get("status");
-                            String statusName = (String) status.get("name");
-                            statusList.add(statusName);
-
-                            try{
-                                JSONObject assignee = (JSONObject) fields.get("assignee");
-                                emailAddress = (String) assignee.get("emailAddress");
-                            } catch ( Exception e){
-                                emailAddress = "No assignee";
-                            }
-                            assigneeList.add(emailAddress);
-                        }
-                    } catch (JSONException e) {
-                        System.out.println("this is error");
-                        e.printStackTrace();
-                    }
-                    latch.countDown();
-                }
-            });
-            latch.await();
-            pLatch.countDown();
-        }
-        pLatch.await();
-        System.out.println("this is " + (issueList.size() == statusList.size()));
-
-        for(int j = 0; j < issueList.size(); j++){
-            if(assigneeList.get(j).equals(username)){
-                if( ! statusList.get(j).equals("Done")){
-                    Dictionary Info = new Hashtable();
-                    Info.put("Type", typeList.get(j));
-                    Info.put("Status", statusList.get(j));
-                    Info.put("Summary", summaryList.get(j));
-                    Info.put("Assignee", assigneeList.get(j));
-                    Info.put("Task", issueList.get(j));
-                    infoList.add(Info);
-                }
+        client.newCall(request).enqueue(new Callback(){
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("this is fail");
+                latch.countDown();
             }
-        }
-        Items = Item.initializeFromDictionary(infoList);
-        initializeAdapter();
 
-        return infoList;
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String emailAddress = "";
+                try {
+                    JSONObject JsonObj = new JSONObject(response.body().string());
+                    JSONArray jsonArr = (JSONArray) JsonObj.get("issues");
+                    for (int i = 0; i < jsonArr.length(); i++) {
+                        JSONObject jsonObj = jsonArr.getJSONObject(i);
+                        JSONObject fields = (JSONObject) jsonObj.get("fields");
+
+                        String tKey = (String) jsonObj.get("key");
+
+                        String summary = (String) fields.get("summary");
+
+                        JSONObject issueType = (JSONObject) fields.get("issuetype");
+                        String name = (String) issueType.get("name");
+                        int tName = 0;
+                        if(name.equals("Story")){
+                            tName = R.drawable.story;
+                        }
+                        else if(name.equals("Epic")){
+                            tName = R.drawable.epic;
+                        }
+
+                        JSONObject status = (JSONObject) fields.get("status");
+                        String statusName = (String) status.get("name");
+
+                        try{
+                            JSONObject assignee = (JSONObject) fields.get("assignee");
+                            emailAddress = (String) assignee.get("emailAddress");
+                        } catch (Exception e){
+                            emailAddress = "No assignee";
+                        }
+
+                        if(emailAddress.equals(username) && !statusName.equals("Done")){
+                                Item issue = new Item(tKey, summary, R.drawable.icons8_jira_240, tName);
+                            itemList.add(issue);
+                        }
+                    }
+                } catch (JSONException e) {
+                    System.out.println("this is error");
+                    e.printStackTrace();
+                }
+                latch.countDown();
+            }
+        });
+
+        latch.await();
+        return itemList;
     }
 
     public void ChangeIssueAssignee(String username, String token, String Issue, String AssigneeID) {
