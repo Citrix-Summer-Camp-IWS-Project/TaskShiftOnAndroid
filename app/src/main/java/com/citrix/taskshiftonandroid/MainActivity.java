@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -19,7 +18,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,7 +26,6 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -81,7 +78,13 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;
     private adapter adapter;
     private ProgressBar loadingView;
-    private ProgressDialog pd;
+    private Menu mMenu;
+    private MenuItem PersonUI1;
+    private MenuItem PersonUI2;
+    private TextView tlTextView;
+    private ImageView tlImageView;
+    private TextView LHRTextView;
+    private ImageView LHRImageView;
 
     short rssi;
     //客户端服务端一体
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         token = Account.getToken();
         AccountID = Account.getAccountID();
 
-
+        //tlTextView = (TextView) findViewById(R.id.nameTL);
         try {
             List<Dictionary> info = GetAllIssueInfo(username, token);
             System.out.println("this is start2");
@@ -159,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
 //        myRecyclerVIew.setItemAnimator(myItemAnimator);
 
     }
+    //would run after the whole View finish loading
         @Override
         public void onWindowFocusChanged(boolean hasFocus)
         {
@@ -168,6 +172,19 @@ public class MainActivity extends AppCompatActivity {
 //            rv.setVisibility(View.VISIBLE);
 //            ProgressBar loadingView = (ProgressBar) findViewById(R.id.circle);
 //            loadingView.setVisibility(View.GONE);
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (username.equals("carlostian927@berkeley.edu")) {
+                            PersonUI2.setVisible(true);
+                        }
+                        if (username.equals("xeal3k@gmail.com")) {
+                            PersonUI1.setVisible(true);
+                        }
+                    }
+                }, 2000);
             }
             }
     private void initializeAdapter(){
@@ -184,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -193,6 +211,15 @@ public class MainActivity extends AppCompatActivity {
     //launch menu
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        mMenu = menu;
+        //initialize menu (hide
+//        menu.findItem(R.id.flavor).setVisible(false);
+
+        PersonUI1 = menu.findItem(R.id.menu1);
+        PersonUI2 = menu.findItem(R.id.menu2);
+        PersonUI1.setVisible(false);
+        PersonUI2.setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
     //menu button
@@ -200,50 +227,44 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item)
     {
 
-        TextView tv = (TextView) findViewById(R.id.name);
-        ImageView iv = (ImageView) findViewById(R.id.imageView);
+//
+//        tlTextView = (TextView) findViewById(R.id.nameTL);
+//        tlImageView = (ImageView) findViewById(R.id.imageTL);
+//        LHRTextView = (TextView) findViewById(R.id.textView);
+//        LHRImageView = (ImageView) findViewById(R.id.imageView2);
         //MenuItem TL = (MenuItem) findViewById(R.id.flavor);
         //Button function
         switch (item.getItemId())
         {
-            case R.id.action_add:
+            case R.id.test1:
 //
+
+
+
                 //Button remove = findViewById(R.id.action_remove);
-                iv.setVisibility(View.GONE);
-                tv.setVisibility(View.GONE);
+//                tlTextView.setVisibility(View.GONE);
+//                tlImageView.setVisibility(View.GONE);
+//                LHRTextView.setVisibility(View.GONE);
+//                LHRImageView.setVisibility(View.GONE);
+                PersonUI1.setVisible(true);
+                PersonUI2.setVisible(true);
 //                TL.(View.GONE);
-//                deviceManager = getSystemService(CompanionDeviceManager.class);
-//                deviceFilter = new BluetoothDeviceFilter.Builder().build();
-//                pairingRequest = new AssociationRequest.Builder()
-//                        .addDeviceFilter(deviceFilter)
-//                        .setSingleDevice(false)
-//                        .build();
-//                deviceManager.associate(pairingRequest,
-//                        new CompanionDeviceManager.Callback() {
-//                            @Override
-//                            public void onDeviceFound(IntentSender chooserLauncher) {
-//                                try {
-//                                    startIntentSenderForResult(chooserLauncher,
-//                                            SELECT_DEVICE_REQUEST_CODE, null, 0, 0, 0);
-//                                } catch (IntentSender.SendIntentException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onFailure(CharSequence charSequence) {
-//
-//                            }
-//                        },
-//                        null);
 
                 break;
-            case R.id.action_remove:
-//                事件
-                tv.setVisibility(View.VISIBLE);
-                iv.setVisibility(View.VISIBLE);
-//                Intent intent = new Intent(this,Login.class);
-//                startActivity(intent);
+            case R.id.test2:
+                PersonUI1.setVisible(false);
+                PersonUI2.setVisible(false);
+
+//                MenuItem TL =  mMenu.findItem(R.id.nameTL);
+//                TL.setVisible(true);
+//                tlTextView = (TextView) findViewById(R.id.nameTL);
+//                tlImageView = (ImageView) findViewById(R.id.imageTL);
+//                LHRTextView = (TextView) findViewById(R.id.textView);
+//                LHRImageView = (ImageView) findViewById(R.id.imageView2);
+//                tlTextView.setVisibility(View.VISIBLE);
+//                tlImageView.setVisibility(View.VISIBLE);
+//                LHRTextView.setVisibility(View.VISIBLE);
+//                LHRImageView.setVisibility(View.VISIBLE);
                 break;
         }
         return true;
@@ -345,6 +366,13 @@ public class MainActivity extends AppCompatActivity {
                 String confirm = mBlueAdapter.getName() + "已与您连接。信号强度: " + Short.toString(rssi);
                 os.write(confirm.getBytes("GBK"));
                 Toast.makeText(getApplicationContext()," " + "已与" + device.getName() + "连接。信号强度: " + rssi, Toast.LENGTH_SHORT).show();
+
+                if (username.equals("carlostian927@berkeley.edu")) {
+                    PersonUI2.setVisible(true);
+                }
+                if (username.equals("xeal3k@gmail.com")) {
+                    PersonUI1.setVisible(true);
+                }
             }
         } catch (Exception e) {
 

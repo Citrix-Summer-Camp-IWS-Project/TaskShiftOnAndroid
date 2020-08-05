@@ -4,26 +4,35 @@
     tools:context="com.text.MainActivity">
 
     <item
-        android:id="@+id/action_add"
+        android:id="@+id/test1"
         android:orderInCategory="1"
-        android:title="test"
-        app:showAsAction="ifRoom"></item>
+        android:title="test1"
+        android:visible="false"
+        app:showAsAction="always"></item>
     <item
-        android:id="@+id/action_remove"
+        android:id="@+id/test2"
+        android:enabled="true"
         android:orderInCategory="2"
-        android:title="test"
-        app:showAsAction="ifRoom"></item>
+        android:title="test2"
+        android:visible="false"
+        app:showAsAction="always"></item>
 <!--    <item-->
 <!--        android:id="@+id/action_remove"-->
 <!--        android:orderInCategory="2"-->
 <!--        android:title="test"-->
 <!--        app:showAsAction="ifRoom" />-->
     <item
-        android:id="@+id/flavor"
+        android:id="@+id/menu1"
         android:orderInCategory="3"
-        android:title=""
+        android:title="menu"
         app:actionLayout="@layout/menuitem"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/menu2"
+        android:orderInCategory="4"
+        android:title="menu"
+        app:actionLayout="@layout/menuhelper"
+        app:showAsAction="always"/>
 
 
 </menu>
