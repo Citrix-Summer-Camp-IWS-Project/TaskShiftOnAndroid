@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     //would run after the whole View finish loading
+
         @Override
         public void onWindowFocusChanged(boolean hasFocus)
         {
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
 //            ProgressBar loadingView = (ProgressBar) findViewById(R.id.circle);
 //            loadingView.setVisibility(View.GONE);
 
+                //for test
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -339,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 String confirm = mBlueAdapter.getName() + "已与您连接。信号强度: " + Short.toString(rssi);
                 os.write(confirm.getBytes("GBK"));
                 Toast.makeText(getApplicationContext()," " + "已与" + device.getName() + "连接。信号强度: " + rssi, Toast.LENGTH_SHORT).show();
-
+                //show person UI
                 if (username.equals("carlostian927@berkeley.edu")) {
                     PersonUI2.setVisible(true);
                 }
