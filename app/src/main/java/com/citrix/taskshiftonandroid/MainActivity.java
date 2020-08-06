@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
             initializeBluetooth();
             ac = new AcceptThread();
             ac.start();
-            connectForPaired();
         }
         Account = (Account) getApplication();
         username=Account.getUsername();
@@ -147,18 +146,18 @@ public class MainActivity extends AppCompatActivity {
 //            loadingView.setVisibility(View.GONE);
 
                 //for test
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (username.equals("carlostian927@berkeley.edu")) {
-                            PersonUI2.setVisible(true);
-                        }
-                        if (username.equals("xeal3k@gmail.com")) {
-                            PersonUI1.setVisible(true);
-                        }
-                    }
-                }, 2000);
+//                Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (username.equals("carlostian927@berkeley.edu")) {
+//                            PersonUI2.setVisible(true);
+//                        }
+//                        if (username.equals("xeal3k@gmail.com")) {
+//                            PersonUI1.setVisible(true);
+//                        }
+//                    }
+//                }, 2000);
             }
             }
     private void initializeAdapter() throws InterruptedException {
@@ -194,7 +193,9 @@ public class MainActivity extends AppCompatActivity {
         PersonUI2 = menu.findItem(R.id.menu2);
         PersonUI1.setVisible(false);
         PersonUI2.setVisible(false);
-
+        if (BluetoothAdapter.getDefaultAdapter() !=null) {
+            connectForPaired();
+        }
         return super.onCreateOptionsMenu(menu);
     }
     //menu button
@@ -380,6 +381,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), String.valueOf(msg.obj),
                         Toast.LENGTH_SHORT).show();
                 super.handleMessage(msg);
+                if (username.equals("carlostian927@berkeley.edu")) {
+                    PersonUI2.setVisible(true);
+                }
+                if (username.equals("xeal3k@gmail.com")) {
+                    PersonUI1.setVisible(true);
+                }
             } else {
                 Item added = Item.toItem(String.valueOf(msg.obj));
                 Items.add(added);
