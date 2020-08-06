@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -133,6 +134,34 @@ public class MainActivity extends AppCompatActivity {
 //        myRecyclerVIew.setItemAnimator(myItemAnimator);
 
     }
+    @Override
+    public void onResume(){
+        super.onResume();
+        // put your code here...
+        System.out.println("I'm resume");
+        java.util.Timer timer = new java.util.Timer(true);
+        TimerTask task = new TimerTask() {
+            public void run() {
+                if(adapter.getItemCount() > 0) {
+                    RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(0);
+                    if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                        com.citrix.taskshiftonandroid.adapter.CardViewHolder viewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                        int[] location = new int[2];
+                        viewHolder.cv.getLocationOnScreen(location);
+                        int x=location[0];//获取当前位置的横坐标
+                        int y=location[1];//获取当前位置的纵坐标
+
+                        System.out.println("cardView coordinate: " + x + "  " + y);
+                        //使用坐标
+                    }
+                }
+            }
+        };
+
+        timer.schedule(task, 10, 100);
+    }
+
+
     //would run after the whole View finish loading
 
         @Override
