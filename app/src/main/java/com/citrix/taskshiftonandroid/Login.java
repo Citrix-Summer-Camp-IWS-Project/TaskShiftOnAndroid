@@ -1,5 +1,6 @@
 package com.citrix.taskshiftonandroid;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        //overridePendingTransition(0,0);
         Button TL = (Button) findViewById(R.id.TL);
         Button LHR = (Button) findViewById(R.id.LHR);
         account = (Account) getApplication();
@@ -32,6 +34,8 @@ public class Login extends AppCompatActivity {
             account.setTLAccountID();
             Intent intent = new Intent(this,Launch.class);
             startActivity(intent);
+            //clear activity startUI
+            ((Activity) this).overridePendingTransition(0, 0);
         });
         LHR.setOnClickListener(v -> {
             account.setLHRUsername();
@@ -39,6 +43,8 @@ public class Login extends AppCompatActivity {
             account.setLHRAccountID();
             Intent intent = new Intent(this,Launch.class);
             startActivity(intent);
+            //clear activity startUI
+            ((Activity) this).overridePendingTransition(0, 0);
         });
     }
 

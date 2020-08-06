@@ -32,6 +32,8 @@ public class Launch extends AppCompatActivity {
             account = (Account) getApplication();
 
             startActivity(new Intent(Launch.this,MainActivity.class));
+            //clear activity startUI
+            ((Activity) Launch).overridePendingTransition(0, 0);
             //Launch.this.finish();// 把当前的LaunchActivity结束掉
         }
     }
