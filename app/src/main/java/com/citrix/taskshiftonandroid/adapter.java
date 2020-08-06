@@ -51,9 +51,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             }
         });
 
-
-
-
         return cvh;
     }
 

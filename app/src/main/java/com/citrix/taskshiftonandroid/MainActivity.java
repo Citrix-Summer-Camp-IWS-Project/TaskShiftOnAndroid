@@ -140,14 +140,15 @@ public class MainActivity extends AppCompatActivity {
         // put your code here...
         System.out.println("I'm resume");
         java.util.Timer timer = new java.util.Timer(true);
-        TimerTask task = new TimerTask() {
-            public void run() {
+                TimerTask task = new TimerTask() {
+                    public void run() {
                 if(adapter.getItemCount() > 0) {
                     RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(0);
                     if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
                         com.citrix.taskshiftonandroid.adapter.CardViewHolder viewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                        viewHolder.getAdapterPosition();
                         int[] location = new int[2];
-                        viewHolder.cv.getLocationOnScreen(location);
+                        viewHolder.cv.getLocationInWindow(location);
                         int x=location[0];//获取当前位置的横坐标
                         int y=location[1];//获取当前位置的纵坐标
 
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        timer.schedule(task, 10, 100);
+        //timer.schedule(task, 10, 1);
     }
 
 

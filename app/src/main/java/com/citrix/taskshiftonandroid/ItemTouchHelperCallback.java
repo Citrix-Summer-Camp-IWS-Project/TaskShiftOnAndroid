@@ -1,14 +1,20 @@
 package com.citrix.taskshiftonandroid;
 
+import android.graphics.Canvas;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.util.TimerTask;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter mAdapter;
+
+    //java.util.Timer timer = new java.util.Timer(true);
+
 
     public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter) {
         this.mAdapter = mAdapter;
@@ -34,13 +40,67 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
+    public void onChildDraw (Canvas c,
+                             RecyclerView recyclerView,
+                             RecyclerView.ViewHolder viewHolder,
+                             float dX,
+                             float dY,
+                             int actionState,
+                             boolean isCurrentlyActive) {
+        super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
+        System.out.println("onswipe");
+
+        //TimerTask task = new TimerTask() {
+            //public void run() {
+                if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+//                    com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
+//                    CardviewHolder.getAdapterPosition();
+//                    int[] location = new int[2];
+//                    CardviewHolder.cv.getLocationInWindow(location);
+//                    int x=location[0];//获取当前位置的横坐标
+//                    int y=location[1];//获取当前位置的纵坐标
+
+                    System.out.println("cardView coordinate: " + dX + "  " + dY);
+
+                }
+            //}
+        //};
+
+        //timer.schedule(task, 10, 500);
+    }
+
+
+
+
+    @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+        System.out.println("onswipe");
         try {
             mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
         } catch (IOException e) {
-            System.out.println("assigned problematic");
+            System.out.println("onswipe");
             e.printStackTrace();
         }
+        java.util.Timer timer = new java.util.Timer(true);
+        TimerTask task = new TimerTask() {
+            public void run() {
+                if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                    com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
+                    CardviewHolder.getAdapterPosition();
+                    int[] location = new int[2];
+                    CardviewHolder.cv.getLocationInWindow(location);
+                    int x=location[0];//获取当前位置的横坐标
+                    int y=location[1];//获取当前位置的纵坐标
+
+                    System.out.println("cardView coordinate: " + x + "  " + y);
+
+                }
+            }
+        };
+
+        //timer.schedule(task, 10, 500);
+
     }
 
     //long press enable the card to drag(up and down)
