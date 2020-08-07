@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.util.Timer;
 import java.util.TimerTask;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
@@ -51,31 +52,33 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                              int actionState,
                              boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
+        System.out.println("onChildDraw cardView coordinate: " + dX+ "  " + dY);
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(2);
+                    if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                        com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                        CardViewHolder.cv.setTranslationX(dX);
+                    }
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
 
 
-        //TimerTask task = new TimerTask() {
-            //public void run() {
-                if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
-//                    com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
-//                    CardviewHolder.getAdapterPosition();
-//                    int[] location = new int[2];
-//                    CardviewHolder.cv.getLocationInWindow(location);
-//                    int x=location[0];//获取当前位置的横坐标
-//                    int y=location[1];//获取当前位置的纵坐标
+            }
+        };
 
-                   // System.out.println("cardView coordinate: " + dX + "  " + dY);
-
-                }
-            //}
-        //};
-
-        //timer.schedule(task, 10, 500);
+        timer.schedule(task, 10, 500);
     }
     @Override
     public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
                                    int actionState) {
         if (timer == null) {
-            timer = new java.util.Timer(true);
+
+
+        }
+        System.out.println("onSelectedChanged" + actionState);
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            System.out.println("the method call");
+            timer = new Timer();
             task = new TimerTask() {
                 public void run() {
                     if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
@@ -86,17 +89,12 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                         int x=location[0];//获取当前位置的横坐标
                         int y=location[1];//获取当前位置的纵坐标
 
-                        System.out.println("cardView coordinate: " + x + "  " + y);
+                        //System.out.println("cardView coordinate: " + x + "  " + y);
 
                     }
                 }
             };
-        }
-        System.out.println("onSelectedChanged" + actionState);
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            System.out.println("the method call");
-
-            timer.schedule(task, 5, 500);
+            timer.schedule(task, 5, 1000);
             System.out.println("timer start success");
 
         }
@@ -120,6 +118,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             System.out.println("onswipe");
             e.printStackTrace();
         }
+        timer.cancel();
 //        java.util.Timer timer = new java.util.Timer(true);
 //        TimerTask task = new TimerTask() {
 //            public void run() {
