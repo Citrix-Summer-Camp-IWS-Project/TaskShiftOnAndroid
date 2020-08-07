@@ -53,23 +53,10 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
 
 
-        //TimerTask task = new TimerTask() {
-            //public void run() {
-                if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
-//                    com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
-//                    CardviewHolder.getAdapterPosition();
-//                    int[] location = new int[2];
-//                    CardviewHolder.cv.getLocationInWindow(location);
-//                    int x=location[0];//获取当前位置的横坐标
-//                    int y=location[1];//获取当前位置的纵坐标
 
-                   // System.out.println("cardView coordinate: " + dX + "  " + dY);
 
-                }
-            //}
-        //};
 
-        //timer.schedule(task, 10, 500);
+
     }
     @Override
     public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
@@ -80,13 +67,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 public void run() {
                     if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
                         com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
-                        CardviewHolder.getAdapterPosition();
+                        int number = CardviewHolder.getAdapterPosition();
                         int[] location = new int[2];
                         CardviewHolder.cv.getLocationInWindow(location);
                         int x=location[0];//获取当前位置的横坐标
                         int y=location[1];//获取当前位置的纵坐标
 
-                        System.out.println("cardView coordinate: " + x + "  " + y);
+                        System.out.println("CallbackcardView coordinate: " + x + "  " + y);
 
                     }
                 }
