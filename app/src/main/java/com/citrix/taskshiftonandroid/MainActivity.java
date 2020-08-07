@@ -100,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBlueAdapter;
     DynamicReceiver dynamicReceiver = new DynamicReceiver();
+
+    private java.util.Timer timer;
+    private TimerTask task;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,34 +137,44 @@ public class MainActivity extends AppCompatActivity {
 //        myItemAnimator.setRemoveDuration(2000);
 //        myRecyclerVIew.setItemAnimator(myItemAnimator);
 
+
+        sendXPosition();
     }
     @Override
     public void onResume(){
         super.onResume();
         // put your code here...
         System.out.println("I'm resume");
-//        java.util.Timer timer = new java.util.Timer(true);
-//                TimerTask task = new TimerTask() {
-//                    public void run() {
-//                if(adapter.getItemCount() > 0) {
-//                    RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(0);
-//                    if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
-//                        com.citrix.taskshiftonandroid.adapter.CardViewHolder viewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
-//                        viewHolder.getAdapterPosition();
-//                        int[] location = new int[2];
-//                        viewHolder.cv.getLocationInWindow(location);
-//                        int x=location[0];//获取当前位置的横坐标
-//                        int y=location[1];//获取当前位置的纵坐标
-//
-//                        System.out.println("cardView coordinate: " + x + "  " + y);
-//                        //使用坐标
-//                    }
-//                }
-//            }
-//        };
+
 
         //timer.schedule(task, 10, 1);
     }
+    public void sendXPosition() {
+        timer = new java.util.Timer(true);
+
+        task = new TimerTask() {
+            public void run() {
+                if(adapter.getItemCount() > 0) {
+                    RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(0);
+                    if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                        com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                        CardviewHolder.getAdapterPosition();
+                        int[] location = new int[2];
+                        CardviewHolder.cv.getLocationInWindow(location);
+                        int x = location[0];//获取当前位置的横坐标
+                        int y = location[1];//获取当前位置的纵坐标
+
+                        System.out.println("MaincardView coordinate: " + x + "  " + y);
+                    }
+                }
+            }
+        };
+        timer.schedule(task,10, 500);
+    }
+
+
+
+
 
 
     //would run after the whole View finish loading
@@ -170,24 +184,15 @@ public class MainActivity extends AppCompatActivity {
         {
             if(hasFocus) {
                 System.out.println("before activity loading finish");
-                //Launch.Launch.finish();
-//            rv.setVisibility(View.VISIBLE);
-//            ProgressBar loadingView = (ProgressBar) findViewById(R.id.circle);
-//            loadingView.setVisibility(View.GONE);
 
-                //for test
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (username.equals("carlostian927@berkeley.edu")) {
-//                            PersonUI2.setVisible(true);
-//                        }
-//                        if (username.equals("xeal3k@gmail.com")) {
-//                            PersonUI1.setVisible(true);
-//                        }
-//                    }
-//                }, 2000);
+                RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(1);
+                com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                //CardviewHolder.cv.setTranslationX(100);
+
+                ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+                ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+
+
             }
             }
     private void initializeAdapter() throws InterruptedException {
@@ -201,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         //为RecyclerView对象指定我们创建得到的layoutManager
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
+        //rv.setItemAnimator();
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
