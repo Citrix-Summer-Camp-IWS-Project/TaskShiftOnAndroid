@@ -188,9 +188,8 @@ public class MainActivity extends AppCompatActivity {
                 RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(1);
                 com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
                 //CardviewHolder.cv.setTranslationX(100);
-
-                ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-                ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+                ItemTouchHelperCallback itcb = new ItemTouchHelperCallback(adapter, rv);
+                itcb.initializeView(rv);
 
 
             }
@@ -207,7 +206,8 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         //rv.setItemAnimator();
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter, rv);
+
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
     }
@@ -249,18 +249,16 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.test1:
-//
 
 
+//                PersonUI1.setVisible(true);
+//                PersonUI2.setVisible(true);
 
-                //Button remove = findViewById(R.id.action_remove);
-//                tlTextView.setVisibility(View.GONE);
-//                tlImageView.setVisibility(View.GONE);
-//                LHRTextView.setVisibility(View.GONE);
-//                LHRImageView.setVisibility(View.GONE);
-                PersonUI1.setVisible(true);
-                PersonUI2.setVisible(true);
-//                TL.(View.GONE);
+                Item sample = new Item("Test swipe", "Test swipe animation"
+                        , R.drawable.icons8_jira_240, R.drawable.epic);
+                adapter.add(0,sample);
+                ItemTouchHelperCallback itcb = new ItemTouchHelperCallback(adapter, rv);
+                itcb.initializeView(rv);
 
                 break;
             case R.id.test2:

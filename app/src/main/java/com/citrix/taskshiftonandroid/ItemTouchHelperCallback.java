@@ -20,13 +20,29 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //java.util.Timer timer = new java.util.Timer(true);
 
 
-    public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter) {
+    public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter, RecyclerView recyclerView) {
         this.mAdapter = mAdapter;
+        //this.initializeView(recyclerView);
+    }
+
+    public void initializeView(RecyclerView recyclerView) {
+
+        System.out.println("I am running initialize");
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
+        if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+            com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+
+            CardViewHolder.cv.setTranslationX(- CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
+
+
+        }
     }
 
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+
+        System.out.println("I am running1");
         //up and down drag
         //int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         //(left and) right swipe
@@ -38,6 +54,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+
+        System.out.println("I am running1");
         mAdapter.onItemMove(viewHolder.getAdapterPosition(),
                 target.getAdapterPosition());
         return true;
@@ -51,16 +69,21 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                              float dY,
                              int actionState,
                              boolean isCurrentlyActive) {
+
+        System.out.println("I am running1");
         super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
         com.citrix.taskshiftonandroid.adapter.CardViewHolder cvh = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
         //cardview x coordinate of sender
         float f1 = dX + cvh.cv.getLeft();
-        System.out.println("position0 cardView coordinate: " + f1);
-        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(2);
+        System.out.println("position0 cardView coordinate: " + dX);
+
+        System.out.println("get left and right" + cvh.cv.getLeft() + cvh.cv.getRight());
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
                     if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
                         com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
                         System.out.println("right" + CardViewHolder.cv.getRight() + CardViewHolder.cv.getLeft());
-                        CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight());
+
+                        CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
                         //cardview x coordinate of reciver
                         float f2 =  dX - CardViewHolder.cv.getRight();
                         System.out.println("position2 cardView coordinate: " + f2);
@@ -78,6 +101,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
                                    int actionState) {
+
+        System.out.println("I am running1");
         if (timer == null) {
 
 
@@ -118,6 +143,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
+        System.out.println("I am running1");
         System.out.println("onswipe");
         try {
             mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
@@ -150,12 +176,16 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //long press enable the card to drag(up and down)
     @Override
     public boolean isLongPressDragEnabled() {
+
+        System.out.println("I am running1");
         return true;
     }
 
     //enable the card to swipe
     @Override
     public boolean isItemViewSwipeEnabled() {
+
+        System.out.println("I am running1");
         return true;
     }
 
