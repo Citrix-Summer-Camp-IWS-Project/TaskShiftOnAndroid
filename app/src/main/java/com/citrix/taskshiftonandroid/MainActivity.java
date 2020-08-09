@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
                 //CardviewHolder.cv.setTranslationX(100);
                 itcb = new ItemTouchHelperCallback(adapter, rv,this);
-                itcb.initializeView(rv);
+                //itcb.initializeView(rv, 0);
 
 
             }
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                         , R.drawable.icons8_jira_240, R.drawable.epic);
                 adapter.add(0,sample);
                 ItemTouchHelperCallback itcb = new ItemTouchHelperCallback(adapter, rv,this);
-                itcb.initializeView(rv);
+                //itcb.initializeView(rv);
 
                 break;
             case R.id.test2:
@@ -412,15 +412,39 @@ public class MainActivity extends AppCompatActivity {
                     PersonUI1.setVisible(true);
                 }
             } else {
-                System.out.println("msg text"+ String.valueOf(msg.obj));
+                System.out.println("msg text "+ String.valueOf(msg.obj));
                 if(String.valueOf(msg.obj).contains("/")) {
+//
+//                    Item added = Item.toItem(String.valueOf(msg.obj));
+//                    Items.add(0,added);
+//                    super.handleMessage(msg);
+//                    adapter.add(0,added);
+//                    adapter.notifyItemInserted(0);
 
-                    Item added = Item.toItem(String.valueOf(msg.obj));
-                    Items.add(0,added);
-                    super.handleMessage(msg);
-                    adapter.add(0,added);
-                    adapter.notifyItemInserted(0);
+                } else {
+                    float dX;
+                    //if (String.valueOf(msg.obj))
+                    try {
+                        dX = new Float(String.valueOf(msg.obj));
+                        itcb.initializeView(rv, dX);
+                    } catch (java.lang.NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
+                    //dX = new Float(String.valueOf(msg.obj));
+                    //dX = Float.parseFloat(String.valueOf(msg.obj));
+                    //itcb.initializeView(rv, dX);
+
                 }
+
+
+
+
+
+
 //                Item added = Item.toItem(String.valueOf(msg.obj));
 //                Items.add(0,added);
                 super.handleMessage(msg);
