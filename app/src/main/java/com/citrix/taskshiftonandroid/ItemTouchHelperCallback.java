@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
+    public MainActivity main;
     private final ItemTouchHelperAdapter mAdapter;
 
     private java.util.Timer timer;
@@ -20,8 +22,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //java.util.Timer timer = new java.util.Timer(true);
 
 
-    public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter, RecyclerView recyclerView) {
+    public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter, RecyclerView recyclerView, MainActivity main) {
         this.mAdapter = mAdapter;
+        this.main = main;
         //this.initializeView(recyclerView);
     }
 
@@ -32,7 +35,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
             com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
 
-            CardViewHolder.cv.setTranslationX(- CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
+            //CardViewHolder.cv.setTranslationX(- CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
 
 
         }
@@ -69,12 +72,22 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                              float dY,
                              int actionState,
                              boolean isCurrentlyActive) {
+        super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
+
+        //float f = Float.parseFloat("25");
 
         System.out.println("I am running1");
-        super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
         com.citrix.taskshiftonandroid.adapter.CardViewHolder cvh = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
         //cardview x coordinate of sender
         float f1 = dX + cvh.cv.getLeft();
+        String s = Float.toString(f1);
+        OutputStream os = main.os;
+        try {
+            main.sendTS(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         System.out.println("position0 cardView coordinate: " + dX);
 
         System.out.println("get left and right" + cvh.cv.getLeft() + cvh.cv.getRight());
@@ -83,7 +96,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                         com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
                         System.out.println("right" + CardViewHolder.cv.getRight() + CardViewHolder.cv.getLeft());
 
-                        CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
+                        //CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
                         //cardview x coordinate of reciver
                         float f2 =  dX - CardViewHolder.cv.getRight();
                         System.out.println("position2 cardView coordinate: " + f2);

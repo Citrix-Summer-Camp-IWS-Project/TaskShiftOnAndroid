@@ -21,7 +21,7 @@ public class Launch extends AppCompatActivity {
         Handler handler = new Handler();
 
 
-        handler.postDelayed(new splashhandler(), 200);//延迟执行splashhandler线程
+        handler.postDelayed(new splashhandler(), 300);//延迟执行splashhandler线程
 
 }
 

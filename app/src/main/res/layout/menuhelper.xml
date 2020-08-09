@@ -29,7 +29,7 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="57dp"
+            android:layout_width="11dp"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imageTL"
             android:layout_alignParentTop="true"
@@ -39,7 +39,6 @@
             android:layout_marginBottom="8dp"
             android:layout_toEndOf="@+id/imageView2"
             android:layout_toRightOf="@+id/imageView2"
-            android:text="Li, HR"
             android:textColor="#0d47a1"
             android:textSize="18sp"
             android:visibility="visible" />

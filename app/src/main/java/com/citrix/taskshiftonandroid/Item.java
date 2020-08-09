@@ -12,6 +12,7 @@ public class Item {
     String storySummary;
     int jiraLogo;
     int storyType;
+    float dX;
 
     Item(String taskid, String storySummary, int jiraLogo, int storyType) {
         this.taskid = taskid;

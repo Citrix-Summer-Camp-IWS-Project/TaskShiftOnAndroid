@@ -23,17 +23,16 @@
 
         <TextView
             android:id="@+id/nameTL"
-            android:layout_width="62dp"
-            android:layout_height="wrap_content"
+            android:layout_width="10dp"
+            android:layout_height="21dp"
             android:layout_alignBottom="@+id/imageTL"
             android:layout_alignParentTop="true"
             android:layout_marginStart="2dp"
             android:layout_marginLeft="2dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="12dp"
             android:layout_toEndOf="@+id/imageTL"
             android:layout_toRightOf="@+id/imageTL"
-            android:text="Tian, L"
             android:textColor="#0d47a1"
             android:textSize="18sp"
             android:visibility="visible" />

@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Item> Items;
     private RecyclerView rv;
     private adapter adapter;
+    private ItemTouchHelperCallback itcb;
     private ProgressBar loadingView;
     private Menu mMenu;
     private MenuItem PersonUI1;
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                 RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(1);
                 com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
                 //CardviewHolder.cv.setTranslationX(100);
-                ItemTouchHelperCallback itcb = new ItemTouchHelperCallback(adapter, rv);
+                itcb = new ItemTouchHelperCallback(adapter, rv,this);
                 itcb.initializeView(rv);
 
 
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         //rv.setItemAnimator();
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter, rv);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter, rv, this);
 
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
@@ -257,24 +258,13 @@ public class MainActivity extends AppCompatActivity {
                 Item sample = new Item("Test swipe", "Test swipe animation"
                         , R.drawable.icons8_jira_240, R.drawable.epic);
                 adapter.add(0,sample);
-                ItemTouchHelperCallback itcb = new ItemTouchHelperCallback(adapter, rv);
+                ItemTouchHelperCallback itcb = new ItemTouchHelperCallback(adapter, rv,this);
                 itcb.initializeView(rv);
 
                 break;
             case R.id.test2:
                 PersonUI1.setVisible(false);
                 PersonUI2.setVisible(false);
-
-//                MenuItem TL =  mMenu.findItem(R.id.nameTL);
-//                TL.setVisible(true);
-//                tlTextView = (TextView) findViewById(R.id.nameTL);
-//                tlImageView = (ImageView) findViewById(R.id.imageTL);
-//                LHRTextView = (TextView) findViewById(R.id.textView);
-//                LHRImageView = (ImageView) findViewById(R.id.imageView2);
-//                tlTextView.setVisibility(View.VISIBLE);
-//                tlImageView.setVisibility(View.VISIBLE);
-//                LHRTextView.setVisibility(View.VISIBLE);
-//                LHRImageView.setVisibility(View.VISIBLE);
                 break;
         }
         return true;
@@ -422,10 +412,21 @@ public class MainActivity extends AppCompatActivity {
                     PersonUI1.setVisible(true);
                 }
             } else {
-                Item added = Item.toItem(String.valueOf(msg.obj));
-                Items.add(added);
+                System.out.println("msg text"+ String.valueOf(msg.obj));
+                if(String.valueOf(msg.obj).contains("/")) {
+
+                    Item added = Item.toItem(String.valueOf(msg.obj));
+                    Items.add(0,added);
+                    super.handleMessage(msg);
+                    adapter.add(0,added);
+                    adapter.notifyItemInserted(0);
+                }
+//                Item added = Item.toItem(String.valueOf(msg.obj));
+//                Items.add(0,added);
                 super.handleMessage(msg);
-                adapter.notifyItemInserted(Items.size() - 1);
+//                adapter.add(0,added);
+//                adapter.notifyItemInserted(0);
+
             }
         }
     };
