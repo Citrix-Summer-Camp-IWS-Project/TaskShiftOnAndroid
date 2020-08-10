@@ -92,9 +92,10 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         System.out.println("I am running " + s);
         OutputStream os = main.os;
-        if (currentTime - lastTime >= 10) {
+        if (currentTime - lastTime >= 20) {
             try {
                 main.sendTS(s);
+                System.out.println("Iamrunning" + s);
             } catch (IOException e) {
                 e.printStackTrace();
             }
