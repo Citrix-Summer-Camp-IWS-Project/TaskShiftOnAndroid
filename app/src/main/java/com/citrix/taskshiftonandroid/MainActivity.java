@@ -416,11 +416,16 @@ public class MainActivity extends AppCompatActivity {
                 if(String.valueOf(msg.obj).contains("/")) {
 //
                     System.out.println("msg text card "+ String.valueOf(msg.obj));
+
+                    Item added = Item.toItem(String.valueOf(msg.obj));
+                    //Items.add(0,added);
+
 //                    Item added = Item.toItem(String.valueOf(msg.obj));
 //                    Items.add(0,added);
 //                    super.handleMessage(msg);
-//                    adapter.add(0,added);
-//                    adapter.notifyItemInserted(0);
+                    adapter.add(0,added);
+                   //adapter.notifyItemInserted(0);
+                   itcb.initializeView(rv,500);
 
                 } else {
                     float dX;
@@ -458,8 +463,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//                Item added = Item.toItem(String.valueOf(msg.obj));
-//                Items.add(0,added);
                 super.handleMessage(msg);
 //                adapter.add(0,added);
 //                adapter.notifyItemInserted(0);

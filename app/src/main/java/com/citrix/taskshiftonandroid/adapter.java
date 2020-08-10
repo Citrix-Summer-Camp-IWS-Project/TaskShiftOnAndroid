@@ -85,7 +85,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         OutputStream os = main.os;
         main.sendTS(s);
         main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
-        notifyItemRemoved(position);
+        //notifyItemRemoved(position);
     }
     @Override
     public void onItemMove(int from, int to) {
@@ -94,7 +94,8 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     }
 
     public void remove(int position) throws IOException {
-
+        Items.remove(position);
+        notifyItemRemoved(position);
     }
     public void add(int position,Item Item) {
         Items.add(position,Item);

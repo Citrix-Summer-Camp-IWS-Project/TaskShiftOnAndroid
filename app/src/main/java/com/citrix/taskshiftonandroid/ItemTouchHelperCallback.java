@@ -13,7 +13,7 @@ import java.util.TimerTask;
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     public MainActivity main;
-    private final ItemTouchHelperAdapter mAdapter;
+    private final adapter mAdapter;
 
     private long currentTime;
     private long lastTime;
@@ -22,7 +22,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //java.util.Timer timer = new java.util.Timer(true);
 
 
-    public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter, RecyclerView recyclerView, MainActivity main) {
+    public ItemTouchHelperCallback(adapter mAdapter, RecyclerView recyclerView, MainActivity main) {
         this.mAdapter = mAdapter;
         this.main = main;
         currentTime = 0;
@@ -37,7 +37,10 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
             com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
 
-            CardViewHolder.cv.setTranslationX(dX);
+            //CardViewHolder.cv.setTranslationX(dX);
+            CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
+            float f1 = dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft();
+            System.out.println("the accept " + CardViewHolder.cv.getLeft() + "  x :" + f1 );
 
 
         }
@@ -75,6 +78,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                              int actionState,
                              boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
+        System.out.println("is currently active " + isCurrentlyActive);
         currentTime = System.currentTimeMillis();
         if (lastTime == 0) {
             lastTime = currentTime;
@@ -89,10 +93,12 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         float rounddX = (float)(Math.round(f1*100))/100;
         String s = Float.toString(rounddX) + " ";
+        float width = 1500;
+        
 
         System.out.println("I am running " + s);
         OutputStream os = main.os;
-        if (currentTime - lastTime >= 10) {
+        if (currentTime - lastTime >= 25) {
             try {
                 main.sendTS(s);
             } catch (IOException e) {
@@ -129,9 +135,25 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                                    int actionState) {
         if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
 
+            try {
+                mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+//                System.out.println("I am running1 " + actionState + " " + viewHolder.getAdapterPosition());
+            } catch (IOException e) {
+                //System.out.println("onswipe");
+                e.printStackTrace();
+            }
+        }
+        if(actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+            try {
+                mAdapter.remove(0);
+//                System.out.println("I am running1 " + actionState + " " + viewHolder.getAdapterPosition());
+            } catch (IOException e) {
+                //System.out.println("onswipe");
+                e.printStackTrace();
+            }
         }
 
-        System.out.println("I am running1" + actionState);
+
 //        System.out.println("onSelectedChanged" + actionState);
 //        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
 //            System.out.println("the method call");
@@ -169,13 +191,18 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
         //System.out.println("I am running1");
-        System.out.println("onswipe");
+        System.out.println("onswipe " + viewHolder.getAdapterPosition());
         try {
-            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+            mAdapter.remove(viewHolder.getAdapterPosition());
         } catch (IOException e) {
-            System.out.println("onswipe");
             e.printStackTrace();
         }
+//        try {
+//            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+//        } catch (IOException e) {
+//            System.out.println("onswipe");
+//            e.printStackTrace();
+//        }
         //currentTime.cancel();
 //        java.util.Timer timer = new java.util.Timer(true);
 //        TimerTask task = new TimerTask() {
