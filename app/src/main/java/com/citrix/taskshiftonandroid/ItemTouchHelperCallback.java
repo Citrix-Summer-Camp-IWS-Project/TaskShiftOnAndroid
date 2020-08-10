@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
@@ -16,7 +15,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public MainActivity main;
     private final ItemTouchHelperAdapter mAdapter;
 
-    private java.util.Timer timer;
+    private long currentTime;
+    private long lastTime;
     private TimerTask task;
 
     //java.util.Timer timer = new java.util.Timer(true);
@@ -25,6 +25,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter, RecyclerView recyclerView, MainActivity main) {
         this.mAdapter = mAdapter;
         this.main = main;
+        currentTime = 0;
+        lastTime = 0;
         //this.initializeView(recyclerView);
     }
 
@@ -73,6 +75,10 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                              int actionState,
                              boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
+        currentTime = System.currentTimeMillis();
+        if (lastTime == 0) {
+            lastTime = currentTime;
+        }
 
         //float f = Float.parseFloat("25");
 
@@ -86,10 +92,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         System.out.println("I am running " + s);
         OutputStream os = main.os;
-        try {
-            main.sendTS(s);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (currentTime - lastTime >= 10) {
+            try {
+                main.sendTS(s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            lastTime = System.currentTimeMillis();
         }
 
         System.out.println("position0 cardView coordinate: " + dX);
@@ -105,15 +114,15 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                         float f2 =  dX - CardViewHolder.cv.getRight();
                         System.out.println("position2 cardView coordinate: " + f2);
                     }
-        timer = new Timer();
-        TimerTask task = new TimerTask() {
-            public void run() {
 
-
-            }
-        };
-
-        timer.schedule(task, 10, 500);
+//        TimerTask task = new TimerTask() {
+//            public void run() {
+//
+//
+//            }
+//        };
+//
+//        timer.schedule(task, 10, 500);
     }
     @Override
     public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
@@ -123,10 +132,6 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
 
         System.out.println("I am running1" + actionState);
-        if (timer == null) {
-
-
-        }
 //        System.out.println("onSelectedChanged" + actionState);
 //        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
 //            System.out.println("the method call");
@@ -171,7 +176,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             System.out.println("onswipe");
             e.printStackTrace();
         }
-        timer.cancel();
+        //currentTime.cancel();
 //        java.util.Timer timer = new java.util.Timer(true);
 //        TimerTask task = new TimerTask() {
 //            public void run() {
