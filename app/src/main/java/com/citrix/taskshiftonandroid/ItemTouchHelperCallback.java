@@ -29,7 +29,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         lastTime = 0;
         //this.initializeView(recyclerView);
     }
+    public void delete(RecyclerView recyclerView, float dX){
 
+    }
     public void initializeView(RecyclerView recyclerView, float dX) {
 
        // System.out.println("I am running initialize");
@@ -120,15 +122,25 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                         float f2 =  dX - CardViewHolder.cv.getRight();
                         System.out.println("position2 cardView coordinate: " + f2);
                     }
+        //when card stop swipe and release, the received card should be deleted
+        boolean currentStatus = isCurrentlyActive;
 
-//        TimerTask task = new TimerTask() {
-//            public void run() {
-//
-//
-//            }
-//        };
-//
-//        timer.schedule(task, 10, 500);
+        System.out.println("currentStatus " + currentStatus + "isCurrentActive " + isCurrentlyActive);
+        boolean b = currentStatus == true && isCurrentlyActive == false;
+        System.out.println("current result" + b);
+        if(currentStatus == true && isCurrentlyActive == false) {
+            System.out.println("onSelectedChanged" + getSwipeThreshold(viewHolder) );
+            String cardDelete = "card&stop send";
+            OutputStream oss = main.os;
+            try {
+                main.sendTS(cardDelete);
+
+                System.out.println("send successfully" );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
     @Override
     public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
@@ -144,13 +156,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             }
         }
         if(actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
-            try {
-                mAdapter.remove(0);
-//                System.out.println("I am running1 " + actionState + " " + viewHolder.getAdapterPosition());
-            } catch (IOException e) {
-                //System.out.println("onswipe");
-                e.printStackTrace();
-            }
+            //if(getSwipeThreshold())
+                //mAdapter.remove(0);
+
         }
 
 
@@ -197,6 +205,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 //        try {
 //            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
 //        } catch (IOException e) {
