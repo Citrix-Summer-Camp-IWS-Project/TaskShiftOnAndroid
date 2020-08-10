@@ -415,6 +415,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("msg text "+ String.valueOf(msg.obj));
                 if(String.valueOf(msg.obj).contains("/")) {
 //
+                    System.out.println("msg text card "+ String.valueOf(msg.obj));
 //                    Item added = Item.toItem(String.valueOf(msg.obj));
 //                    Items.add(0,added);
 //                    super.handleMessage(msg);
@@ -423,6 +424,18 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     float dX;
+                    if(String.valueOf(msg.obj).length() >7) {
+                        String[] str = String.valueOf(msg.obj).split(" ");
+
+                        System.out.println("msg text squezz "+ String.valueOf(msg.obj));
+                        for(int i = 0; i < str.length; i++) {
+
+                            dX = new Float(str[i]);
+
+                            System.out.println("msg text squezz in for "+ String.valueOf(msg.obj) + " " + i + dX);
+                            itcb.initializeView(rv, dX);
+                        }
+                    }
                     //if (String.valueOf(msg.obj))
                     try {
                         dX = new Float(String.valueOf(msg.obj));

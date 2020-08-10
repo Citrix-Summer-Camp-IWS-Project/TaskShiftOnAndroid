@@ -30,7 +30,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     public void initializeView(RecyclerView recyclerView, float dX) {
 
-        System.out.println("I am running initialize");
+       // System.out.println("I am running initialize");
         RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
         if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
             com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
@@ -45,7 +45,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
 
-        System.out.println("I am running1");
+        //System.out.println("I am running1");
         //up and down drag
         //int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         //(left and) right swipe
@@ -58,7 +58,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
 
-        System.out.println("I am running1");
+        //System.out.println("I am running1");
         mAdapter.onItemMove(viewHolder.getAdapterPosition(),
                 target.getAdapterPosition());
         return true;
@@ -76,11 +76,15 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         //float f = Float.parseFloat("25");
 
-        System.out.println("I am running1");
         com.citrix.taskshiftonandroid.adapter.CardViewHolder cvh = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
+
         //cardview x coordinate of sender
         float f1 = dX + cvh.cv.getLeft();
-        String s = Float.toString(f1);
+
+        float rounddX = (float)(Math.round(f1*100))/100;
+        String s = Float.toString(rounddX) + " ";
+
+        System.out.println("I am running " + s);
         OutputStream os = main.os;
         try {
             main.sendTS(s);
@@ -114,41 +118,44 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
                                    int actionState) {
+        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
 
-        System.out.println("I am running1");
+        }
+
+        System.out.println("I am running1" + actionState);
         if (timer == null) {
 
 
         }
-        System.out.println("onSelectedChanged" + actionState);
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            System.out.println("the method call");
-            timer = new Timer();
-            task = new TimerTask() {
-                public void run() {
-                    if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
-                        com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
-                        CardviewHolder.getAdapterPosition();
-                        int[] location = new int[2];
-                        CardviewHolder.cv.getLocationInWindow(location);
-                        int x=location[0];//获取当前位置的横坐标
-                        int y=location[1];//获取当前位置的纵坐标
-
-                        //System.out.println("cardView coordinate: " + x + "  " + y);
-
-                    }
-                }
-            };
-            timer.schedule(task, 5, 1000);
-            System.out.println("timer start success");
-
-        }
-        if (actionState == 0) {
-            System.out.println("timer stop success");
-            //System.gc();
-            task.cancel();
-            timer.cancel();
-        }
+//        System.out.println("onSelectedChanged" + actionState);
+//        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+//            System.out.println("the method call");
+//            timer = new Timer();
+//            task = new TimerTask() {
+//                public void run() {
+//                    if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+//                        com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
+//                        CardviewHolder.getAdapterPosition();
+//                        int[] location = new int[2];
+//                        CardviewHolder.cv.getLocationInWindow(location);
+//                        int x=location[0];//获取当前位置的横坐标
+//                        int y=location[1];//获取当前位置的纵坐标
+//
+//                        //System.out.println("cardView coordinate: " + x + "  " + y);
+//
+//                    }
+//                }
+//            };
+//            timer.schedule(task, 5, 1000);
+//            System.out.println("timer start success");
+//
+//        }
+//        if (actionState == 0) {
+//            System.out.println("timer stop success");
+//            //System.gc();
+//            task.cancel();
+//            timer.cancel();
+//        }
 
     }
 
@@ -156,7 +163,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
-        System.out.println("I am running1");
+        //System.out.println("I am running1");
         System.out.println("onswipe");
         try {
             mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
@@ -190,7 +197,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean isLongPressDragEnabled() {
 
-        System.out.println("I am running1");
+        //System.out.println("I am running1");
         return true;
     }
 
@@ -198,7 +205,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean isItemViewSwipeEnabled() {
 
-        System.out.println("I am running1");
+        //System.out.println("I am running1");
         return true;
     }
 
