@@ -306,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
     public void sendTS(String ts) throws IOException {
         if (os == null) {
             Toast.makeText(getApplicationContext(), "请先连接你的同事。", Toast.LENGTH_SHORT).show();
+            System.out.println("请连接你的同事");
             return;
         }
         os.write(ts.getBytes("GBK"));

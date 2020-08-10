@@ -94,7 +94,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         float rounddX = (float)(Math.round(f1*100))/100;
         String s = Float.toString(rounddX) + " ";
         float width = 1500;
-        
+
 
         System.out.println("I am running " + s);
         OutputStream os = main.os;
