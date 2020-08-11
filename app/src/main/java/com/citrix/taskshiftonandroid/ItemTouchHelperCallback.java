@@ -21,6 +21,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     private TimerTask task;
     private DecimalFormat df;
     private int flag = 0;
+    private boolean swipeAccelaration = false;
 
     //java.util.Timer timer = new java.util.Timer(true);
 
@@ -31,6 +32,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         currentTime = 0;
         lastTime = 0;
         flag = 0;
+        swipeAccelaration = false;
         //this.initializeView(recyclerView);
     }
     public void delete(RecyclerView recyclerView, float dX){
@@ -84,8 +86,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public float getSwipeEscapeVelocity(float defaultValue) {
-        flag = 1;
+        //flag = 1;
         System.out.println("swipeVelocity " + defaultValue );
+        swipeAccelaration = true;
         return defaultValue;
     }
 
@@ -107,6 +110,10 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
 
         if((currentStatus == false) && (isCurrentlyActive == true)) {
+            //user release card and stop
+
+            System.out.println("User release card");
+
             flag = 0;
         }
 
@@ -128,7 +135,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         System.out.println("I am running " + s);
         OutputStream os = main.os;
-        //avoid
+        //avoid bluetooth stiky package
         if ((currentTime - lastTime >= 20) && (flag == 0)) {
             try {
                 main.sendTS(s);
@@ -154,13 +161,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                         float f2 =  dX - CardViewHolder.cv.getRight();
                         System.out.println("position2 cardView coordinate: " + f2);
                     }
+
+
         //when card stop swipe and release, the received card should be deleted
-
-
         System.out.println("currentStatus " + currentStatus + "isCurrentActive " + isCurrentlyActive);
         boolean b = currentStatus == true && isCurrentlyActive == false;
         System.out.println("current result" + b);
-        if((currentStatus == true) && (isCurrentlyActive == false) && (f < 0.5) ) {
+        if((currentStatus == true) && (isCurrentlyActive == false) && (f < 0.5) && (swipeAccelaration == false) ) {
             System.out.println("onSelectedChanged" + getSwipeThreshold(viewHolder) );
             String cardDelete = "card&stop send";
             OutputStream oss = main.os;
@@ -235,6 +242,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         // if onSwiped runed, the card was send
         flag = 1;
+        swipeAccelaration = false;
         //System.out.println("I am running1");
         System.out.println("onswipe " + viewHolder.getAdapterPosition());
         try {
