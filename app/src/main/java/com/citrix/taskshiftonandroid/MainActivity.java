@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
 //                    super.handleMessage(msg);
                 adapter.add(0, added);
-                itcb.initializeView(rv, 0);
+                //itcb.initializeView(rv, -2000);
 
             } else if(String.valueOf(msg.obj).contains("&")) {
                 try {

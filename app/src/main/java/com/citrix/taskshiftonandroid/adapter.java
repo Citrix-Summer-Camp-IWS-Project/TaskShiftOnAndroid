@@ -80,7 +80,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     @Override
     public void onItemDismiss(int position) throws IOException {
         Item a = Items.get(position);
-        Items.remove(position);
+        //Items.remove(position);
         String s = a.toString();
         OutputStream os = main.os;
         main.sendTS(s);

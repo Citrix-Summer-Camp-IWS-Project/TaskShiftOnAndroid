@@ -20,6 +20,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     private long lastTime;
     private TimerTask task;
     private DecimalFormat df;
+    private int flag = 0;
 
     //java.util.Timer timer = new java.util.Timer(true);
 
@@ -29,6 +30,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         this.main = main;
         currentTime = 0;
         lastTime = 0;
+        flag = 0;
         //this.initializeView(recyclerView);
     }
     public void delete(RecyclerView recyclerView, float dX){
@@ -81,6 +83,14 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
+    public float getSwipeEscapeVelocity(float defaultValue) {
+        flag = 1;
+        System.out.println("swipeVelocity " + defaultValue );
+        return defaultValue;
+    }
+
+
+    @Override
     public void onChildDraw (Canvas c,
                              RecyclerView recyclerView,
                              RecyclerView.ViewHolder viewHolder,
@@ -89,12 +99,16 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                              int actionState,
                              boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
-        System.out.println("is currently active " + isCurrentlyActive);
+        //System.out.println("swipeVelocity " );
         currentTime = System.currentTimeMillis();
         if (lastTime == 0) {
             lastTime = currentTime;
         }
 
+
+        if((currentStatus == false) && (isCurrentlyActive == true)) {
+            flag = 0;
+        }
 
 
         com.citrix.taskshiftonandroid.adapter.CardViewHolder cvh = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
@@ -102,9 +116,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         float totalLength = (float) length;
         //cardview x coordinate of sender
         float f1 = dX + cvh.cv.getLeft();
-
+        //transfer to percentage
         float rounddX = (float)(Math.round(f1*100))/100;
-        df=new DecimalFormat("0.000");//设置保留位数
+        df = new DecimalFormat("0.000");
         df.format((float)rounddX/totalLength);
 
         String s = df.format((float)rounddX/totalLength);
@@ -114,9 +128,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         System.out.println("I am running " + s);
         OutputStream os = main.os;
-        if (currentTime - lastTime >= 25) {
+        //avoid
+        if ((currentTime - lastTime >= 20) && (flag == 0)) {
             try {
                 main.sendTS(s);
+
+                System.out.println("sending x coordinate: " + dX );
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -142,12 +160,16 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         System.out.println("currentStatus " + currentStatus + "isCurrentActive " + isCurrentlyActive);
         boolean b = currentStatus == true && isCurrentlyActive == false;
         System.out.println("current result" + b);
-        if((currentStatus == true && isCurrentlyActive == false) && (f < 0.5)) {
+        if((currentStatus == true) && (isCurrentlyActive == false) && (f < 0.5) ) {
             System.out.println("onSelectedChanged" + getSwipeThreshold(viewHolder) );
             String cardDelete = "card&stop send";
             OutputStream oss = main.os;
             try {
+
+                System.out.println("swipeVelocity sending"  );
                 main.sendTS(cardDelete);
+                //card release before totally swiped
+                flag = 1;
 
                 System.out.println("send successfully" );
             } catch (IOException e) {
@@ -211,7 +233,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+        // if onSwiped runed, the card was send
+        flag = 1;
         //System.out.println("I am running1");
         System.out.println("onswipe " + viewHolder.getAdapterPosition());
         try {
