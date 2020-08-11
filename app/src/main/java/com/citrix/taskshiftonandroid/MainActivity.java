@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -30,6 +31,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -102,10 +106,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
-//        initializeBluetooth();
-//        ac = new AcceptThread();
-//        ac.start();
-//        connectForPaired();
+        initializeBluetooth();
+        ac = new AcceptThread();
+        ac.start();
+        connectForPaired();
+        List<Dictionary> info = new ArrayList<>();
+
 //
 //        try {
 //            List<Dictionary> info = GetAllIssueInfo(username, token);
@@ -129,35 +135,6 @@ public class MainActivity extends AppCompatActivity {
 //            System.out.println("this is error");
 //            e.printStackTrace();
 //        }
-//
-//
-//
-//        RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
-//        //data
-//
-//        //initiate recycle view
-//        //define the width of divider
-//        int space = 2;
-//        rv.addItemDecoration(new SpacesItemDecoration(space));
-
-        //final adapter adapter = new adapter(Items);
-        //这里我们选择创建一个LinearLayoutManager
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //为RecyclerView对象指定我们创建得到的layoutManager
-        //rv.setLayoutManager(layoutManager);
-        //rv.setAdapter(adapter);
-//
-//        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-//        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-//        touchHelper.attachToRecyclerView(rv);
-
-        //test
-        //ItemTouchHelper data = touchHelper;
-
-//        myItemAnimator = new Animation();
-//        myItemAnimator.setRemoveDuration(2000);
-//        myRecyclerVIew.setItemAnimator(myItemAnimator);
 
     }
     private void initializeAdapter(){
@@ -272,6 +249,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeBluetooth() {
+        AndPermission.with(this).runtime()
+                .permission(Permission.ACCESS_COARSE_LOCATION , Permission.ACCESS_FINE_LOCATION)
+                .onGranted(permissions -> {
+                    System.out.println("Location permission got");
+                })
+                .onDenied(permissions -> {
+                    System.out.println("Location permission needed");
+                })
+                .start();
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBlueAdapter == null) {
             Toast.makeText(getApplicationContext(), "设备不支持蓝牙", Toast.LENGTH_LONG).show();
@@ -320,11 +306,14 @@ public class MainActivity extends AppCompatActivity {
                 os = clientSocket.getOutputStream();
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext()," " + device.getName() + "连接失败。", Toast.LENGTH_SHORT).show();
+                tryConnect(device);
             }
             if (os != null) {
                 String confirm = mBlueAdapter.getName() + "已与您连接。信号强度: " + Short.toString(rssi);
                 os.write(confirm.getBytes("GBK"));
                 Toast.makeText(getApplicationContext()," " + "已与" + device.getName() + "连接。信号强度: " + rssi, Toast.LENGTH_SHORT).show();
+            } else {
+                tryConnect(device);
             }
         } catch (Exception e) {
 
