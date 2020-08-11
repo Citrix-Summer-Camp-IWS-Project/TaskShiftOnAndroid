@@ -75,23 +75,15 @@ public class MainActivity extends AppCompatActivity {
     private List<Item> Items;
     private RecyclerView rv;
     private adapter adapter;
-
-    short rssi;
-    //客户端服务端一体
-    private BluetoothSocket clientSocket;
     private BluetoothDevice deviceToPair;
-    private BluetoothDevice pairedDevice;
-    public OutputStream os;
     //指收到了多少条消息，从第二条开始就已经是ITem了
     private int numTexts;
     //private static final int REQUEST_ENABLE_BT = 1;
     private CompanionDeviceManager deviceManager;
     private AssociationRequest pairingRequest;
     private BluetoothDeviceFilter deviceFilter;
-    private UUID MY_UUID = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
     private static final int SELECT_DEVICE_REQUEST_CODE = 42;
     public BluetoothService mBluetooth;
-    private BluetoothAdapter mBlueAdapter;
     DynamicReceiver dynamicReceiver = new DynamicReceiver();
     private static MainActivity mainActivity;
     public static MainActivity getMainActivity() {
