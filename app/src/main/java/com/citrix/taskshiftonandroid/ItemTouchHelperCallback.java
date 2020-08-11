@@ -34,6 +34,13 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void delete(RecyclerView recyclerView, float dX){
 
     }
+    public void setOriginX(RecyclerView recyclerView) {
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
+        if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+            com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+            CardViewHolder.cv.setTranslationX(CardViewHolder.cv.getLeft());
+        }
+    }
     public void initializeView(RecyclerView recyclerView, float dX) {
 
        // System.out.println("I am running initialize");

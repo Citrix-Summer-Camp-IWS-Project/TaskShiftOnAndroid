@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                //itcb.initializeView(rv, 0);
+                itcb.setOriginX(rv);
 
             } else {
 
@@ -444,6 +444,7 @@ public class MainActivity extends AppCompatActivity {
                         if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
                             com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
                             dX = (CardviewHolder.cv.getRight() + CardviewHolder.cv.getLeft() * 2) * dX;
+                            dX = dX - CardviewHolder.cv.getLeft();
                         }
 
                         itcb.initializeView(rv, dX);
