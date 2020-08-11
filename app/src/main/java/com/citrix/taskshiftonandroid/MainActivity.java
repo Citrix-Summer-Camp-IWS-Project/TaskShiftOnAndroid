@@ -434,10 +434,18 @@ public class MainActivity extends AppCompatActivity {
                 //itcb.initializeView(rv, 0);
 
             } else {
+
+                System.out.println("msg text coordinate " + String.valueOf(msg.obj));
                     float dX;
                     //if (String.valueOf(msg.obj))
                     try {
                         dX = new Float(String.valueOf(msg.obj));
+                        RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(0);
+                        if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                            com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                            dX = (CardviewHolder.cv.getRight() + CardviewHolder.cv.getLeft() * 2) * dX;
+                        }
+
                         itcb.initializeView(rv, dX);
                         rv.smoothScrollToPosition(0);
                     } catch (java.lang.NumberFormatException e) {
