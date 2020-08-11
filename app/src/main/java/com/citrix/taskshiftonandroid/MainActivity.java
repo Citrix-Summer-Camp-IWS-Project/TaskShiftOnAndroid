@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDeviceFilter deviceFilter;
     private UUID MY_UUID = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
     private static final int SELECT_DEVICE_REQUEST_CODE = 42;
-    private BluetoothService mBluetooth;
+    public BluetoothService mBluetooth;
     private BluetoothAdapter mBlueAdapter;
     DynamicReceiver dynamicReceiver = new DynamicReceiver();
     private static MainActivity mainActivity;
@@ -233,14 +233,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void sendTS(String ts) throws IOException {
-        if (os == null) {
-            Toast.makeText(getApplicationContext(), "请先连接你的同事。", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        os.write(ts.getBytes("GBK"));
-        return;
-    }
+
 
     // for the divider width
     class SpacesItemDecoration extends RecyclerView.ItemDecoration {

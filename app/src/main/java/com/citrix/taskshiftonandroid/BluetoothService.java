@@ -166,4 +166,13 @@ public class BluetoothService {
             }
         }
     }
+
+    public void sendTS(String ts) throws IOException {
+        if (os == null) {
+            Toast.makeText(mainActivity.getApplicationContext(), "请先连接你的同事。", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        os.write(ts.getBytes("GBK"));
+        return;
+    }
 }

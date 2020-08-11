@@ -56,7 +56,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         String s = a.toString();
         MainActivity main = MainActivity.getMainActivity();
         OutputStream os = main.os;
-        main.sendTS(s);
+        main.mBluetooth.sendTS(s);
         main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
         notifyItemRemoved(position);
     }
