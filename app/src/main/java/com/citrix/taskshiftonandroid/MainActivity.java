@@ -102,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
-//        initializeBluetooth();
-//        ac = new AcceptThread();
-//        ac.start();
-//        connectForPaired();
-//
+        if (BluetoothAdapter.getDefaultAdapter() !=null) {
+            initializeBluetooth();
+            ac = new AcceptThread(this);
+            ac.start();
+            connectForPaired();
+        }
+
         try {
             initializeAdapter();
         } catch (InterruptedException e) {
@@ -172,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        //根据不同的id点击不同按钮控制activity需要做的事件
         switch (item.getItemId())
         {
             case R.id.action_add:
@@ -229,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
             Context context = getApplicationContext();
             IntentFilter filter = new IntentFilter();
             filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-            //注册广播接收
             registerReceiver(dynamicReceiver,filter);
         }
     }
@@ -238,19 +238,18 @@ public class MainActivity extends AppCompatActivity {
     class DynamicReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            //通过土司验证接收到广播
             int bonded = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE);
             if (bonded == BluetoothDevice.BOND_BONDED) {
-                Toast.makeText(context,"配对成功,正在连接: " + deviceToPair.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Pairing successful. Trying to connect:" + deviceToPair.getName(), Toast.LENGTH_SHORT).show();
                 tryConnect(deviceToPair);
             } else if (bonded == BluetoothDevice.BOND_NONE) {
-                Toast.makeText(context,"配对失败,请重试", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Pairing Failed.", Toast.LENGTH_SHORT).show();
             }
         }
     }
     public void sendTS(String ts) throws IOException {
         if (os == null) {
-            Toast.makeText(getApplicationContext(), "请先连接你的同事。", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Please make a connection first.", Toast.LENGTH_SHORT).show();
             return;
         }
         os.write(ts.getBytes("GBK"));
@@ -278,13 +277,15 @@ public class MainActivity extends AppCompatActivity {
         mBlueAdapter.startDiscovery();
     }
     private final BroadcastReceiver discvoerReceiver = new BroadcastReceiver() {
+        private int pairedCount = 0;
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+            if (BluetoothDevice.ACTION_FOUND.equals(action) && pairedCount == 0) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     pairedDevice = device;
+                    pairedCount ++;
                     rssi = intent.getExtras().getShort(BluetoothDevice.EXTRA_RSSI);
                     tryConnect(pairedDevice);
                 }
@@ -292,9 +293,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     public void tryConnect(BluetoothDevice device) {
-        // 主动连接蓝牙
         try {
-            // 判断是否在搜索,如果在搜索，就取消搜索
             if (mBlueAdapter.isDiscovering()) {
                 mBlueAdapter.cancelDiscovery();
             }
@@ -305,12 +304,13 @@ public class MainActivity extends AppCompatActivity {
                 clientSocket.connect();
                 os = clientSocket.getOutputStream();
             } catch (Exception e) {
-                Toast.makeText(getApplicationContext()," " + device.getName() + "连接失败。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext()," " + device.getName() + "Connection Failed.", Toast.LENGTH_SHORT).show();
+                tryConnect(device);
             }
             if (os != null) {
-                String confirm = mBlueAdapter.getName() + "已与您连接。信号强度: " + Short.toString(rssi);
+                String confirm = mBlueAdapter.getName() + "has connected to you with Rssi: " + Short.toString(rssi);
                 os.write(confirm.getBytes("GBK"));
-                Toast.makeText(getApplicationContext()," " + "已与" + device.getName() + "连接。信号强度: " + rssi, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext()," " + "Already connected to" + device.getName() + "with Rssi: " + rssi, Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
 
@@ -347,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             MainActivity activity = mActivity.get();
             if (activity!=null) {
-                if (numTexts == 1) {
+                if (numTexts == 0) {
                     Toast.makeText(activity.getApplicationContext(), String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
                     super.handleMessage(msg);
                 } else {
@@ -368,8 +368,10 @@ public class MainActivity extends AppCompatActivity {
         private OutputStream os;
         private InputStream is;
         private MainActivity mActivity;
+        private MyHandler handler;
         public AcceptThread(MainActivity activity) {
             this.mActivity = activity;
+            this.handler = new MyHandler(mActivity);
             try {
                 serverSocket = mBlueAdapter
                         .listenUsingRfcommWithServiceRecord("同事", MY_UUID);
@@ -392,7 +394,6 @@ public class MainActivity extends AppCompatActivity {
                             is.read(tt, 0, tt.length);
                             Message msg = new Message();
                             msg.obj = new String(tt, "GBK");
-                            MyHandler handler = new MyHandler(MainActivity.this);
                             handler.sendMessage(msg);
                         }
                     }
