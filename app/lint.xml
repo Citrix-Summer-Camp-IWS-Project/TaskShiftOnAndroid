@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconLocation">
+        <ignore path="src/main/res/drawable/icons8_jira_240.png" />
+        <ignore path="src/main/res/drawable/jira.PNG" />
+    </issue>
+</lint>

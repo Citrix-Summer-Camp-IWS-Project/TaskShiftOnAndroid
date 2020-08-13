@@ -2,7 +2,6 @@ package com.citrix.taskshiftonandroid;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +27,6 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +37,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -103,32 +102,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
 //        initializeBluetooth();
-//        ac = new AcceptThread();
+//        ac = new AcceptThread(this);
 //        ac.start();
 //        connectForPaired();
 //
-//        try {
-//            List<Dictionary> info = GetAllIssueInfo(username, token);
-//            System.out.println("this is start2");
-//            System.out.println("this is info" + info);
-//            /*
-//            for(int i = 0; i < info.size(); i++){
-//                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//                String json = gson.toJson(info.get(i));
-//                System.out.println("this is " + json );
-//            }
-//
-//             */
-//        } catch (JSONException e) {
-//            System.out.println("this is error");
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            System.out.println("this is error");
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            System.out.println("this is error");
-//            e.printStackTrace();
-//        }
+        try {
+            List<Dictionary> info = GetAllIssueInfo(username, token);
+            System.out.println("this is start2");
+            System.out.println("this is info" + info);
+            /*
+            for(int i = 0; i < info.size(); i++){
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                String json = gson.toJson(info.get(i));
+                System.out.println("this is " + json );
+            }
+
+             */
+        } catch (JSONException e) {
+            System.out.println("this is error");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("this is error");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("this is error");
+            e.printStackTrace();
+        }
 //
 //
 //
@@ -235,8 +234,10 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SELECT_DEVICE_REQUEST_CODE &&
                 resultCode == Activity.RESULT_OK) {
             // User has chosen to pair with the Bluetooth device.
-            deviceToPair =
-                    data.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                deviceToPair =
+                        data.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE);
+            }
             deviceToPair.createBond();
 
             // ... Continue interacting with the paired device.
@@ -350,21 +351,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private Handler handler = new Handler() {
+    //@SuppressLint("HandlerLeak")
+    private static class MyHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
+        private int numTexts;
+        private MyHandler(MainActivity activity) {
+            this.mActivity = new WeakReference<MainActivity>(activity);
+            this.numTexts = 0;
+        }
+        @Override
         public void handleMessage(Message msg) {
-            numTexts++;
-            if (numTexts == 1) {
-                Toast.makeText(getApplicationContext(), String.valueOf(msg.obj),
-                        Toast.LENGTH_SHORT).show();
-                super.handleMessage(msg);
-            } else {
-                Item added = Item.toItem(String.valueOf(msg.obj));
-                Items.add(added);
-                super.handleMessage(msg);
-                adapter.notifyItemInserted(Items.size() - 1);
+            MainActivity activity = mActivity.get();
+            if (activity!=null) {
+                if (numTexts == 1) {
+                    Toast.makeText(activity.getApplicationContext(), String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
+                    super.handleMessage(msg);
+                } else {
+                    Item added = Item.toItem(String.valueOf(msg.obj));
+                    activity.Items.add(added);
+                    super.handleMessage(msg);
+                    activity.adapter.notifyItemInserted(activity.Items.size() - 1);
+                }
             }
         }
-    };
+
+    }
     // 线程服务类
     private class AcceptThread extends Thread {
         private BluetoothServerSocket serverSocket;
@@ -372,8 +383,9 @@ public class MainActivity extends AppCompatActivity {
         // 输入 输出流
         private OutputStream os;
         private InputStream is;
-
-        public AcceptThread() {
+        private MainActivity mActivity;
+        public AcceptThread(MainActivity activity) {
+            this.mActivity = activity;
             try {
                 serverSocket = mBlueAdapter
                         .listenUsingRfcommWithServiceRecord("同事", MY_UUID);
@@ -396,6 +408,7 @@ public class MainActivity extends AppCompatActivity {
                             is.read(tt, 0, tt.length);
                             Message msg = new Message();
                             msg.obj = new String(tt, "GBK");
+                            MyHandler handler = new MyHandler(MainActivity.this);
                             handler.sendMessage(msg);
                         }
                     }
@@ -410,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         Use API to all the project in json format
          */
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         String credential = Credentials.basic(username, token);
         final CountDownLatch latch = new CountDownLatch(1);
         Request request = new Request.Builder()
@@ -465,11 +478,11 @@ public class MainActivity extends AppCompatActivity {
     public List<Dictionary> GetAllIssueInfo(String username, String token) throws IOException, JSONException, InterruptedException {
         List<Dictionary> infoList = new ArrayList<Dictionary>();
         List<String> projectKey = ProjectKey(username, token);
-        List<String> issueList = new ArrayList<String>();
-        List<String> summaryList = new ArrayList<String>();
-        List<String> assigneeList = new ArrayList<String>();
-        List<String> statusList = new ArrayList<String>();
-        List<String> typeList = new ArrayList<String>();
+        final List<String> issueList = new ArrayList<String>();
+        final List<String> summaryList = new ArrayList<String>();
+        final List<String> assigneeList = new ArrayList<String>();
+        final List<String> statusList = new ArrayList<String>();
+        final List<String> typeList = new ArrayList<String>();
 
         final CountDownLatch iLatch = new CountDownLatch(issueList.size());
         OkHttpClient client = new OkHttpClient().newBuilder()

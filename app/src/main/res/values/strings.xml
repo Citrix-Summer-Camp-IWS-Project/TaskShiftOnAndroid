@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">taskShiftOnAndroid</string>
+    <string name="todo">TODO</string>
+    <string name="TS">TS-11</string>
+    <string name="bluetooth">Investigate how bluetooth works on Android</string>
+    <string name="test">test</string>
+    <string name="start">START</string>
+    <string name="done">DONE</string>
+    <string name="add">+新同事</string>
+    <string name="delete">delete</string>
 </resources>

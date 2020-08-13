@@ -10,7 +10,7 @@
         <item name="materialCardViewStyle">@style/AppCard</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
         //for button _test
-        <item name="android:stateListAnimator" tools:ignore="NewApi">@animator/mtrl_btn_state_list_anim</item>
+        <item name="android:stateListAnimator" tools:ignore="NewApi,PrivateResource">@animator/mtrl_btn_state_list_anim</item>
         <!-- Original AppCompat attributes. -->
         <item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>
         <item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>
@@ -42,17 +42,6 @@
     <style name="AppCard" parent="Widget.MaterialComponents.CardView">
         <item name="cardElevation">4dp</item>
         <item name="cardCornerRadius">2dp</item>
-    </style>
-
-
-    //button更新_test
-    <style name="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:minWidth">@dimen/mtrl_btn_dialog_btn_min_width</item>
-        <item name="android:lines">1</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:layout_marginStart">@dimen/mtrl_btn_text_btn_padding_left</item>
-        <item name="android:layout_marginLeft">@dimen/mtrl_btn_text_btn_padding_left</item>
     </style>
 
 </resources>

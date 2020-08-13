@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="155dp"
-        android:gravity="right"
+        android:gravity="end"
         android:orientation="vertical">
 
         <!-- Media -->
@@ -36,7 +36,7 @@
                 android:layout_marginStart="44dp"
                 android:layout_marginLeft="44dp"
                 android:layout_marginBottom="58dp"
-                android:text="TS-11"
+                android:text='@string/TS'
                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_marginLeft="26dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="0dp"
-                android:text="Investigate how blue tooth works on Android"
+                android:text='@string/bluetooth'
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="18sp" />
@@ -65,7 +65,8 @@
                 android:layout_marginStart="11dp"
                 android:layout_marginLeft="11dp"
                 android:layout_marginBottom="56dp"
-                app:srcCompat="@drawable/epic" />
+                app:srcCompat="@drawable/epic"
+                android:contentDescription='@string/todo' />
 
             <ImageView
                 android:id="@+id/jira"
@@ -78,7 +79,7 @@
                 android:layout_marginEnd="19dp"
                 android:layout_marginRight="19dp"
                 android:layout_marginBottom="63dp"
-                android:contentDescription="test"
+                android:contentDescription='@string/test'
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/icons8_jira_240" />
 
@@ -89,7 +90,6 @@
             android:layout_height="55dp">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/startButton"
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginEnd="114dp"
                 android:layout_marginRight="114dp"
-                android:text="START" />
+                android:text='@string/start' />
 
             <com.google.android.material.button.MaterialButton
                 style="?attr/borderlessButtonStyle"
@@ -107,17 +107,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginEnd="18dp"
                 android:layout_marginRight="18dp"
-                android:text="DONE" />
+                android:text='@string/done' />
         </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:gravity="right"
-            android:orientation="horizontal">
-
-        </LinearLayout>
 
     </LinearLayout>
 
