@@ -2,11 +2,13 @@ package com.citrix.taskshiftonandroid;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -27,6 +29,8 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,19 +72,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private List<Item> Items;
+    private List<Item> Items = new ArrayList<>();
     private RecyclerView rv;
     private adapter adapter;
 
     short rssi;
-    //客户端服务端一体
     private BluetoothSocket clientSocket;
     private BluetoothDevice deviceToPair;
     private BluetoothDevice pairedDevice;
     public OutputStream os;
     private AcceptThread ac;
 
-    //指收到了多少条消息，从第二条开始就已经是ITem了
     private int numTexts;
     //private static final int REQUEST_ENABLE_BT = 1;
     private CompanionDeviceManager deviceManager;
@@ -102,57 +104,37 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycleviewlisttest);
-        if (BluetoothAdapter.getDefaultAdapter() !=null) {
+        if (BluetoothAdapter.getDefaultAdapter() != null) {
             initializeBluetooth();
             ac = new AcceptThread(this);
             ac.start();
             connectForPaired();
         }
-
-        try {
-            initializeAdapter();
-        } catch (InterruptedException e) {
-            System.out.println("this is error");
-            e.printStackTrace();
-        }
-
-
+        initializeAdapter();
         RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
-        //data
-
-        //initiate recycle view
         //define the width of divider
         int space = 2;
         rv.addItemDecoration(new SpacesItemDecoration(space));
 
-        //final adapter adapter = new adapter(Items);
-        //这里我们选择创建一个LinearLayoutManager
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //为RecyclerView对象指定我们创建得到的layoutManager
-        //rv.setLayoutManager(layoutManager);
-        //rv.setAdapter(adapter);
-//
-//        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-//        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-//        touchHelper.attachToRecyclerView(rv);
-
-        //test
-        //ItemTouchHelper data = touchHelper;
-
-//        myItemAnimator = new Animation();
-//        myItemAnimator.setRemoveDuration(2000);
-//        myRecyclerVIew.setItemAnimator(myItemAnimator);
-
     }
-    private void initializeAdapter() throws InterruptedException {
-        Items = getAllIssueInfo(username, token);
-        adapter = new adapter(Items);
 
-        RecyclerView rv = (RecyclerView) findViewById(R.id.tasklist);
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (hasFocus) {
+
+        }
+    }
+
+    private void initializeAdapter() {
+        Intent intent = getIntent();
+        ArrayList<Item> itemsString = (ArrayList<Item>) intent.getSerializableExtra("items");
+        for (Item item : itemsString) {
+            Items.add(item);
+        }
+        adapter = new adapter(Items);
+        rv = (RecyclerView) findViewById(R.id.tasklist);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //为RecyclerView对象指定我们创建得到的layoutManager
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
@@ -213,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -259,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeBluetooth() {
         mBlueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBlueAdapter == null) {
-            Toast.makeText(getApplicationContext(), "设备不支持蓝牙", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "bluetooth not found", Toast.LENGTH_LONG).show();
         } else if (mBlueAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent =
@@ -352,6 +336,7 @@ public class MainActivity extends AppCompatActivity {
                     super.handleMessage(msg);
                 } else {
                     Item added = Item.toItem(String.valueOf(msg.obj));
+                    added.emailAddress = activity.username;
                     activity.Items.add(added);
                     super.handleMessage(msg);
                     activity.adapter.notifyItemInserted(activity.Items.size() - 1);
@@ -364,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
     private class AcceptThread extends Thread {
         private BluetoothServerSocket serverSocket;
         private BluetoothSocket socket;
-        // 输入 输出流
         private OutputStream os;
         private InputStream is;
         private MainActivity mActivity;
@@ -402,83 +386,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-    public List<Item> getAllIssueInfo(final String username, String token) throws InterruptedException {
-        final List<Item> itemList = new ArrayList<Item>();
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        final String KEY = "MD";
-        String credential = Credentials.basic(username, token);
-        HttpUrl httpUrl = HttpUrl.parse("https://nj-summer-camp-2020.atlassian.net/rest/api/3/search").newBuilder()
-                .addQueryParameter("jql", "project=" + KEY)
-                .build();
-        Request request = new Request.Builder()
-                //.url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/search?jql=project=" + KEY)
-                .url(httpUrl)
-                .method("GET", null)
-                .addHeader("Authorization", credential)
-                .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
-                .build();
-
-        client.newCall(request).enqueue(new Callback(){
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e){
-                System.out.println("Web No Response.");
-                latch.countDown();
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException{
-                String emailAddress = "";
-                try {
-                    JSONObject JsonObj = new JSONObject(response.body().string());
-                    JSONArray jsonArr = (JSONArray) JsonObj.get("issues");
-                    for (int i = 0; i < jsonArr.length(); i++) {
-                        JSONObject jsonObj = jsonArr.getJSONObject(i);
-                        JSONObject fields = (JSONObject) jsonObj.get("fields");
-
-                        String tKey = (String) jsonObj.get("key");
-
-                        String summary = (String) fields.get("summary");
-
-                        JSONObject issueType = (JSONObject) fields.get("issuetype");
-                        String name = (String) issueType.get("name");
-                        int tName = 0;
-                        if(name.equals("Story")){
-                            tName = R.drawable.story;
-                        }
-                        else if(name.equals("Epic")){
-                            tName = R.drawable.epic;
-                        }
-
-                        JSONObject status = (JSONObject) fields.get("status");
-                        String statusName = (String) status.get("name");
-
-                        try{
-                            JSONObject assignee = (JSONObject) fields.get("assignee");
-                            emailAddress = (String) assignee.get("emailAddress");
-                        } catch (Exception e){
-                            emailAddress = "No assignee";
-                        }
-
-                        if(emailAddress.equals(username) && !statusName.equals("Done")){
-                            Item issue = new Item(tKey, summary, R.drawable.icons8_jira_240, tName);
-                            itemList.add(issue);
-                        }
-                    }
-                } catch (JSONException e){
-                    e.printStackTrace();
-                }
-                latch.countDown();
-            }
-        });
-
-        latch.await();
-        return itemList;
     }
 
     public void ChangeIssueAssignee(String username, String token, String Issue, String AssigneeID) {

@@ -65,7 +65,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         Collections.swap(Items, from, to);
         notifyItemMoved(from, to);
     }
-    //interface above
 
     public void remove(int position) throws IOException {
 
