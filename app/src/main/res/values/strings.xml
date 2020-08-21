@@ -8,4 +8,6 @@
     <string name="done">DONE</string>
     <string name="add">+新同事</string>
     <string name="delete">delete</string>
+    <string name="TL">L, Tian</string>
+    <string name="LHR">HR, LI</string>
 </resources>

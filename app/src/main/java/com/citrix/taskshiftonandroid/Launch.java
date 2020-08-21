@@ -35,17 +35,11 @@ import okhttp3.Response;
 
 public class Launch extends AppCompatActivity {
 
-    //public String username = "xeal3k@gmail.com";
-    public String username = "carlostian927@berkeley.edu";
-    //public String token = "dK9YeYe38KuOfEDacc0wCC34";
-    public String token = "DwNBtNVKteYVQd7MjNHF0250";
-    //public String AccountID = "5f033116b545e200154e76f4";
-    public String AccountID = "5f03322ad6803200212f2dc0";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loadingview);
+
     }
 
     @Override
@@ -57,15 +51,19 @@ public class Launch extends AppCompatActivity {
 
     class Splash extends Thread {
         public void run() {
-            Intent intent = new Intent(getApplication(), MainActivity.class);
+            //get account from Login
+            Account account = (Account) getIntent().getSerializableExtra("Account");
+            //initialize new intent of list
+            Intent intent = new Intent(Launch.this, MainActivity.class);
             ArrayList<Item> items = new ArrayList<Item>();
             try {
-                items = getAllIssueInfo(username, token);
+                items = getAllIssueInfo(account.getUsername(), account.getToken());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             intent.putExtra("items", items);
             startActivity(intent);
+            ((Activity) Launch.this).overridePendingTransition(0, 0);
         }
     }
 
