@@ -31,10 +31,8 @@
                 android:layout_width="66dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="44dp"
-                android:layout_marginLeft="44dp"
                 android:layout_marginBottom="58dp"
                 android:text='@string/TS'
                 android:textAppearance="?attr/textAppearanceHeadline6" />
@@ -44,10 +42,8 @@
                 android:layout_width="279dp"
                 android:layout_height="47dp"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="26dp"
-                android:layout_marginLeft="26dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="0dp"
                 android:text='@string/bluetooth'
@@ -60,10 +56,8 @@
                 android:layout_width="29dp"
                 android:layout_height="29dp"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="11dp"
-                android:layout_marginLeft="11dp"
                 android:layout_marginBottom="56dp"
                 app:srcCompat="@drawable/epic"
                 android:contentDescription='@string/todo' />
@@ -73,11 +67,9 @@
                 android:layout_width="22dp"
                 android:layout_height="21dp"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="19dp"
-                android:layout_marginRight="19dp"
                 android:layout_marginBottom="63dp"
                 android:contentDescription='@string/test'
                 android:scaleType="centerCrop"
@@ -94,9 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginEnd="114dp"
-                android:layout_marginRight="114dp"
                 android:text='@string/start' />
 
             <com.google.android.material.button.MaterialButton
@@ -104,9 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginEnd="18dp"
-                android:layout_marginRight="18dp"
                 android:text='@string/done' />
         </RelativeLayout>
 

@@ -4,4 +4,10 @@
         <ignore path="src/main/res/drawable/icons8_jira_240.png" />
         <ignore path="src/main/res/drawable/jira.PNG" />
     </issue>
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/raw/carlostian927private" />
+        <ignore path="src/main/res/raw/carlostian927public" />
+        <ignore path="src/main/res/raw/xeal3kprivate" />
+        <ignore path="src/main/res/raw/xeal3kpublic" />
+    </issue>
 </lint>

@@ -62,6 +62,7 @@ public class Launch extends AppCompatActivity {
                 e.printStackTrace();
             }
             intent.putExtra("items", items);
+            intent.putExtra("account", account);
             startActivity(intent);
             ((Activity) Launch.this).overridePendingTransition(0, 0);
         }
@@ -113,7 +114,7 @@ public class Launch extends AppCompatActivity {
                     for (int i = 0; i < jsonArr.length(); i++) {
                         JSONObject jsonObj = jsonArr.getJSONObject(i);
                         Item issue = new Item(jsonObj, username);
-                        if (issue.emailAddress != username) {
+                        if (issue.emailAddress.equals(username)) {
                             itemList.add(issue);
                         }
                     }

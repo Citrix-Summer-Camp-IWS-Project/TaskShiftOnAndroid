@@ -38,10 +38,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -49,6 +61,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -73,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private List<Item> Items = new ArrayList<>();
+    private Account mAccount;
     private RecyclerView rv;
     private adapter adapter;
 
@@ -131,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         for (Item item : itemsString) {
             Items.add(item);
         }
+        mAccount = (Account)intent.getSerializableExtra("account");
         adapter = new adapter(Items);
         rv = (RecyclerView) findViewById(R.id.tasklist);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -276,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+    private int connectedCount = 0;
     public void tryConnect(BluetoothDevice device) {
         try {
             if (mBlueAdapter.isDiscovering()) {
@@ -291,14 +310,41 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext()," " + device.getName() + "Connection Failed.", Toast.LENGTH_SHORT).show();
                 tryConnect(device);
             }
-            if (os != null) {
-                String confirm = mBlueAdapter.getName() + "has connected to you with Rssi: " + Short.toString(rssi);
-                os.write(confirm.getBytes("GBK"));
-                Toast.makeText(getApplicationContext()," " + "Already connected to" + device.getName() + "with Rssi: " + rssi, Toast.LENGTH_SHORT).show();
+            if (os != null && connectedCount == 0) {
+                Toast.makeText(getApplicationContext()," " + "Already connected to " + device.getName() + "with Rssi: " + rssi, Toast.LENGTH_SHORT).show();
+                connectedCount ++;
+                verifyIdentity(mAccount, device);
             }
         } catch (Exception e) {
 
         }
+    }
+
+    public static byte[] bytesMerger(byte[] byte_1, byte[] byte_2) {
+        byte[] byte_3 = new byte[byte_1.length + byte_2.length];
+        System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
+        System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
+        return byte_3;
+    }
+    public static byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        // read bytes from the input stream and store them in buffer
+        while ((len = in.read(buffer)) != -1) {
+            // write bytes from the buffer into output stream
+            os.write(buffer, 0, len);
+        }
+        return os.toByteArray();
+    }
+    public void verifyIdentity(Account mAccount, BluetoothDevice device) throws IOException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+
+        PrivateKey key = Account.getPriKey(mAccount, this);
+
+        byte[] identity = mAccount.RSAEncrypt(mAccount.getUsername(), key);
+        String confirm = mAccount.getUsername() + " has connected to you with Rssi: " + Short.toString(rssi);
+        byte[] sendMsg = bytesMerger(identity, confirm.getBytes("UTF-8"));
+        os.write(sendMsg);
     }
     // for the divider width
     class SpacesItemDecoration extends RecyclerView.ItemDecoration {
@@ -320,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
     private static class MyHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
         private int numTexts;
@@ -332,10 +380,22 @@ public class MainActivity extends AppCompatActivity {
             MainActivity activity = mActivity.get();
             if (activity!=null) {
                 if (numTexts == 0) {
-                    Toast.makeText(activity.getApplicationContext(), String.valueOf(msg.obj), Toast.LENGTH_SHORT).show();
                     super.handleMessage(msg);
+                    byte[] byteMsg = (byte[]) msg.obj;
+                    try {
+                        connectionVerification(byteMsg, activity);
+                    } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException e) {
+                        e.printStackTrace();
+                    }
+                    numTexts ++;
                 } else {
-                    Item added = Item.toItem(String.valueOf(msg.obj));
+                    String item = "";
+                    try {
+                        item = new String((byte[]) msg.obj, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    Item added = Item.toItem(item);
                     added.emailAddress = activity.username;
                     activity.Items.add(added);
                     super.handleMessage(msg);
@@ -344,7 +404,34 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        public void connectionVerification(byte[] byteMsg, MainActivity activity) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+            String helMsg = "";
+            byte[] identity = new byte[128];
+            byte[] helloMsg = new byte[byteMsg.length - 128];
+            System.arraycopy(byteMsg, 0, identity, 0, 128);
+            System.arraycopy(byteMsg, 128, helloMsg, 0, byteMsg.length - 128);
+
+            helMsg = new String(helloMsg, "UTF-8");
+            Toast.makeText(activity.getApplicationContext(), helMsg, Toast.LENGTH_SHORT).show();
+
+            PublicKey pubKey = Account.getPubKey(helMsg, activity);
+            byte[] decryptedIdentity = Account.RSADecrypt(identity, pubKey);
+            String finalMsg = new String(decryptedIdentity, "UTF-8");
+            int emailPos = helMsg.indexOf(" ");
+            String email = helMsg.substring(0, emailPos);
+            if (email.equals(finalMsg)){
+                Toast.makeText(activity.getApplicationContext(), "Identity verified", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(activity.getApplicationContext(), "Identity unverified", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
+
+    public BluetoothAdapter getmBlueAdapter() {
+        return mBlueAdapter;
+    }
+
     // 线程服务类
     private class AcceptThread extends Thread {
         private BluetoothServerSocket serverSocket;
@@ -366,9 +453,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            // 截获客户端的蓝牙消息
             try {
-                socket = serverSocket.accept(); // 如果阻塞了，就会一直停留在这里
+                socket = serverSocket.accept();
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
                 while (true) {
@@ -377,7 +463,8 @@ public class MainActivity extends AppCompatActivity {
                         if (tt.length > 0) {
                             is.read(tt, 0, tt.length);
                             Message msg = new Message();
-                            msg.obj = new String(tt, "GBK");
+                            msg.obj = tt;
+
                             handler.sendMessage(msg);
                         }
                     }

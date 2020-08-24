@@ -24,9 +24,7 @@
             android:layout_width="91dp"
             android:layout_height="48dp"
             android:layout_marginStart="57dp"
-            android:layout_marginLeft="57dp"
             android:layout_toEndOf="@+id/TL"
-            android:layout_toRightOf="@+id/TL"
             android:gravity="center"
             android:text="@string/LHR" />
     </RelativeLayout>
