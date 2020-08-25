@@ -1,29 +1,73 @@
 package com.citrix.taskshiftonandroid;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONException;
+
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
 public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implements ItemTouchHelperAdapter {
+
+    public enum TaskState {
+        toDo ("11"),
+        inProgress("21"),
+        done("31");
+        private String stateNum;
+        TaskState(String stateNum){
+            this.stateNum = stateNum;
+        }
+        public String getStateNum() {
+            return stateNum;
+        }
+    }
+
+    public MainActivity main;
 
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card, viewGroup, false);
         CardViewHolder cvh = new CardViewHolder(v);
+        cvh.startBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = cvh.getAdapterPosition();
+                Item a = Items.get(position);
+                try {
+                    main.ChangeIssueStatus(main.username,main.token, a.taskid, TaskState.inProgress.getStateNum());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("success start button");
+            }
+        });
+        cvh.doneBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = cvh.getAdapterPosition();
+                Item a = Items.get(position);
+                try {
+                    main.ChangeIssueStatus(main.username,main.token, a.taskid, TaskState.done.getStateNum());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Items.remove(position);
+                notifyItemRemoved(position);
+                System.out.println("success done button");
+
+            }
+        });
         return cvh;
     }
 
@@ -54,8 +98,6 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         Item a = Items.get(position);
         Items.remove(position);
         String s = a.toString();
-        MainActivity main = MainActivity.getMainActivity();
-        OutputStream os = main.os;
         main.sendTS(s);
         main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
         notifyItemRemoved(position);
@@ -74,8 +116,9 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         notifyItemInserted(position);
     }
 
-    adapter(List<Item> Items){
+    adapter(List<Item> Items, MainActivity main){
         this.Items = Items;
+        this.main = main;
     }
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -84,6 +127,8 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         ImageView jira;
         ImageView storyType;
 
+        Button startBut;
+        Button doneBut;
         CardViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.card);
@@ -91,19 +136,10 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
             taskSummary = (TextView)itemView.findViewById(R.id.summary);
             jira = (ImageView)itemView.findViewById(R.id.jira);
             storyType = (ImageView)itemView.findViewById(R.id.storyType);
+            startBut = (Button) itemView.findViewById(R.id.startButton);
+            doneBut = (Button) itemView.findViewById(R.id.doneButton);
         }
     }
-
-    //for add item
-    //public void remove(int position){
-    //    Items.remove(position);
-    //    notifyItemRemoved(position);
-    //}
-    //for delete item
-    //public void add(int position,String data) {
-    //    Items.add(position,data);
-    //    notifyItemInserted(position);
-    //}
 
 }
 

@@ -110,13 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBlueAdapter;
     DynamicReceiver dynamicReceiver = new DynamicReceiver();
-    private static MainActivity mainActivity;
-    public static MainActivity getMainActivity() {
-        return mainActivity;
-    }
-    public MainActivity() {
-        mainActivity = this;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             Items.add(item);
         }
         mAccount = (Account)intent.getSerializableExtra("account");
-        adapter = new adapter(Items);
+        adapter = new adapter(Items, this);
         rv = (RecyclerView) findViewById(R.id.tasklist);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -494,6 +487,41 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if(response.code() == 204){
+                    System.out.println("Status Change succeeded");
+                }
+                else{
+                    System.out.println("Assign failed" + response.code());
+                }
+            }
+        });
+    }
+
+    public void ChangeIssueStatus(String username, String token, String issue, String status) throws JSONException {
+        String credential = Credentials.basic(username, token);
+        MediaType mediaType = MediaType.parse("application/json");
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonO = new JSONObject();
+        jsonO.put("id", status);
+        jsonObject.put("transition", jsonO);
+        RequestBody body = RequestBody.create(jsonObject.toString(),mediaType);
+        Request request = new Request.Builder()
+                .url("https://nj-summer-camp-2020.atlassian.net/rest/api/3/issue/" + issue +
+                        "/transitions?expand=transitions.fields")
+                .method("POST", body)
+                .addHeader("Authorization", credential)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Assign failed");
             }
 
             @Override

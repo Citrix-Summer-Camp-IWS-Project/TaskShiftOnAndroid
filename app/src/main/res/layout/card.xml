@@ -82,20 +82,22 @@
             android:layout_height="55dp">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/startButton"
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="114dp"
-                android:text='@string/start' />
+                android:text="@string/start" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/doneButton"
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="18dp"
-                android:text='@string/done' />
+                android:text="@string/done" />
         </RelativeLayout>
 
     </LinearLayout>
