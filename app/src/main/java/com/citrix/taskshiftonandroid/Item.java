@@ -78,7 +78,6 @@ public class Item implements Serializable {
         String emailAddress = s.substring(0, s.indexOf("//"));
         return new Item(id, summary, Logo, type, emailAddress);
     }
-
 }
 
 

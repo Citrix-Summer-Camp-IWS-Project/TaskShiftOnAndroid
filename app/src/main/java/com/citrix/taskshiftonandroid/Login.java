@@ -35,8 +35,9 @@ public class Login extends AppCompatActivity {
     }
 
     void buttonHelper(View view) {
-        Intent intent = new Intent(this, Launch.class);
+        Intent intent = new Intent(this, Web.class);
         intent.putExtra("Account", AllAccounts.getAccount(((Button) view).getTag().toString()));
+        System.out.println("this is " + AllAccounts.getAccount(((Button) view).getTag().toString()));
         startActivity(intent);
         ((Activity) this).overridePendingTransition(0, 0);
     }

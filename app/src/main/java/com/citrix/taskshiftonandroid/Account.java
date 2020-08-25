@@ -25,11 +25,17 @@ public class Account implements Serializable {
     private String username;
     private String token;
     private String accountID;
+    private String url;
+    private String clientID;
+    private String clientSecret;
 
-    Account(String username, String token, String accountID){
+    Account(String username, String token, String accountID, String url, String clientID, String clientSecret) {
         this.username = username;
         this.token = token;
         this.accountID = accountID;
+        this.url = url;
+        this.clientID = clientID;
+        this.clientSecret = clientSecret;
     }
 
     public String getUsername() {
@@ -55,6 +61,12 @@ public class Account implements Serializable {
     public void setAccountID(String accountID) {
         this.accountID = accountID;
     }
+
+    public String getUrl() { return url; }
+
+    public String getClientID() { return clientID; }
+
+    public String getClientSecret() { return clientSecret; }
 
 
     public static byte[] RSAEncrypt(String text, PrivateKey key)

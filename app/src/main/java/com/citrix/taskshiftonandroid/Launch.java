@@ -80,6 +80,43 @@ public class Launch extends AppCompatActivity {
         super.onDestroy();
     }
 
+    public String getCloudID() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final String[] cloudId = new String[1];
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url("https://api.atlassian.com/oauth/token/accessible-resources")
+                .method("GET", null)
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "Bearer " + Web.getAccessToken())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                System.out.println("Web No Response.");
+                latch.countDown();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String responses = response.body().string();
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = new JSONObject(responses.substring(1, responses.length()-1));
+                    cloudId[0] = (String) jsonObj.get("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                latch.countDown();
+            }
+        });
+
+        latch.await();
+        return cloudId[0];
+    }
+
     public ArrayList<Item> getAllIssueInfo(final String username, String token) throws InterruptedException {
         final ArrayList<Item> itemList = new ArrayList<Item>();
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -87,14 +124,15 @@ public class Launch extends AppCompatActivity {
 
         final CountDownLatch latch = new CountDownLatch(1);
         final String KEY = "MD";
-        String credential = Credentials.basic(username, token);
-        HttpUrl httpUrl = HttpUrl.parse("https://nj-summer-camp-2020.atlassian.net/rest/api/3/search").newBuilder()
+
+        String cloudId = getCloudID();
+        HttpUrl httpUrl = HttpUrl.parse("https://api.atlassian.com/ex/jira/" + cloudId + "/rest/api/3/search").newBuilder()
                 .addQueryParameter("jql", "project=" + KEY)
                 .build();
         Request request = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
-                .addHeader("Authorization", credential)
+                .addHeader("Authorization", "Bearer " + Web.getAccessToken())
                 .addHeader("Cookie", "atlassian.xsrf.token=3b8b59a3-a91d-43ab-91e9-1f39c1f730a8_5b1c7d1bbfe800ba2d5af1baeed5078f6ccf7d4d_lin")
                 .build();
 
