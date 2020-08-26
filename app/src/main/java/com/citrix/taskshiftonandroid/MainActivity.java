@@ -86,8 +86,12 @@ public class MainActivity extends AppCompatActivity {
     //public String AccountID = "5f033116b545e200154e76f4";
     public String AccountID = "5f03322ad6803200212f2dc0";
 
+    public static final int ITEMLABEL = 0;
+    public static final int COORLABEL = 1;
+    public static final int SENDFINISHLABEL = 2;
 
-
+    private long currentTime = 0;
+    private long lastTime = 0;
     private List<Item> Items = new ArrayList<>();
     private Account mAccount;
     private RecyclerView rv;
@@ -100,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
     public OutputStream os;
     private AcceptThread ac;
 
-    private int numTexts;
-    //private static final int REQUEST_ENABLE_BT = 1;
     private CompanionDeviceManager deviceManager;
     private AssociationRequest pairingRequest;
     private BluetoothDeviceFilter deviceFilter;
@@ -242,12 +244,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void sendTS(String ts) throws IOException {
+    public void sendTS(String ts, boolean necessaryMsg, int label) throws IOException {
         if (os == null) {
             Toast.makeText(getApplicationContext(), "Please make a connection first.", Toast.LENGTH_SHORT).show();
             return;
         }
-        os.write(ts.getBytes("GBK"));
+        ts = ts + "\0" + Integer.toString(label);
+        currentTime = System.currentTimeMillis();
+        if (currentTime - lastTime >= 20 || necessaryMsg) {
+            os.write(ts.getBytes("UTF-8"));
+            lastTime = System.currentTimeMillis();
+        }
         return;
     }
 
@@ -382,17 +389,32 @@ public class MainActivity extends AppCompatActivity {
                     }
                     numTexts ++;
                 } else {
-                    String item = "";
+                    String textMsg = "";
                     try {
-                        item = new String((byte[]) msg.obj, "UTF-8");
+                        textMsg = new String((byte[]) msg.obj, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    Item added = Item.toItem(item);
-                    added.emailAddress = activity.username;
-                    activity.Items.add(added);
-                    super.handleMessage(msg);
-                    activity.adapter.notifyItemInserted(activity.Items.size() - 1);
+                    while (textMsg.contains("\0")) {
+                        String currText = textMsg.substring(0,textMsg.indexOf("\0"));
+                        textMsg = textMsg.substring(textMsg.indexOf("\0") + 1);
+                        int label = Integer.parseInt(textMsg.substring(0, 1));
+                        textMsg = textMsg.substring(1);
+                        switch (label){
+                            case ITEMLABEL:
+                                Item added = Item.toItem(currText);
+                                added.emailAddress = activity.username;
+                                activity.Items.add(added);
+                                super.handleMessage(msg);
+                                activity.adapter.notifyItemInserted(activity.Items.size() - 1);
+                                break;
+                            case COORLABEL:
+                                break;
+                            case SENDFINISHLABEL:
+                                break;
+                        }
+                    }
+
                 }
             }
         }

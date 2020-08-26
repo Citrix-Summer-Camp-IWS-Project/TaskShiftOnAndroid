@@ -98,7 +98,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         Item a = Items.get(position);
         Items.remove(position);
         String s = a.toString();
-        main.sendTS(s);
+        main.sendTS(s, true, MainActivity.ITEMLABEL);
         main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
         notifyItemRemoved(position);
     }
