@@ -79,8 +79,8 @@ public class Web extends AppCompatActivity {
             }
         });
 
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
+//        CookieManager.getInstance().removeAllCookies(null);
+//        CookieManager.getInstance().flush();
     }
 
     public String getCode(String url) {

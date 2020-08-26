@@ -1,22 +1,71 @@
 package com.citrix.taskshiftonandroid;
 
+import android.graphics.Canvas;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.util.TimerTask;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private final ItemTouchHelperAdapter mAdapter;
+    public MainActivity main;
+    private final adapter mAdapter;
+    private boolean currentStatus = false;
+    private long currentTime;
+    private long lastTime;
+    private TimerTask task;
+    private DecimalFormat df;
+    private int flag = 0;
+    private boolean swipeAccelaration = false;
 
-    public ItemTouchHelperCallback(ItemTouchHelperAdapter mAdapter) {
+    //java.util.Timer timer = new java.util.Timer(true);
+
+
+    public ItemTouchHelperCallback(adapter mAdapter, RecyclerView recyclerView, MainActivity main) {
         this.mAdapter = mAdapter;
+        this.main = main;
+        currentTime = 0;
+        lastTime = 0;
+        flag = 0;
+        swipeAccelaration = false;
+        //this.initializeView(recyclerView);
+    }
+    public void delete(RecyclerView recyclerView, float dX){
+
+    }
+    public void setOriginX(RecyclerView recyclerView) {
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
+        if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+            com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+            CardViewHolder.cv.setTranslationX(0);
+        }
+    }
+    public void initializeView(RecyclerView recyclerView, float dX) {
+
+       // System.out.println("I am running initialize");
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
+        if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+            com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+
+            //CardViewHolder.cv.setTranslationX(dX);
+            CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
+            float f1 = dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft();
+            System.out.println("the accept " + CardViewHolder.cv.getLeft() + "  x :" + f1 );
+
+
+        }
     }
 
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+
+        //System.out.println("I am running1");
         //up and down drag
         //int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         //(left and) right swipe
@@ -28,31 +77,193 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+
+        //System.out.println("I am running1");
         mAdapter.onItemMove(viewHolder.getAdapterPosition(),
                 target.getAdapterPosition());
         return true;
     }
 
-    //after the card has swiped over
+    @Override
+    public float getSwipeEscapeVelocity(float defaultValue) {
+        //flag = 1;
+        System.out.println("swipeVelocity " + defaultValue );
+        //the card has reached maximum escape velocity
+        swipeAccelaration = true;
+        return defaultValue;
+    }
+
+
+    @Override
+    public void onChildDraw (Canvas c,
+                             RecyclerView recyclerView,
+                             RecyclerView.ViewHolder viewHolder,
+                             float dX,
+                             float dY,
+                             int actionState,
+                             boolean isCurrentlyActive) {
+        super.onChildDraw(c, recyclerView,viewHolder,dX,dY,actionState,isCurrentlyActive);
+        //System.out.println("swipeVelocity " );
+        currentTime = System.currentTimeMillis();
+        if (lastTime == 0) {
+            lastTime = currentTime;
+        }
+
+
+        if((currentStatus == false) && (isCurrentlyActive == true)) {
+            //user release card and stop
+
+            System.out.println("User release card");
+
+            flag = 0;
+        }
+
+
+        com.citrix.taskshiftonandroid.adapter.CardViewHolder cvh = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
+        int length = cvh.cv.getRight() + cvh.cv.getLeft() * 2;
+        float totalLength = (float) length;
+        //cardview x coordinate of sender
+        float f1 = dX + cvh.cv.getLeft();
+        //transfer to percentage
+        float rounddX = (float)(Math.round(f1*100))/100;
+        df = new DecimalFormat("0.000");
+        df.format((float)rounddX/totalLength);
+
+        String s = df.format((float)rounddX/totalLength);
+        float f = Float.parseFloat(s);
+
+
+
+        System.out.println("I am running " + s);
+        OutputStream os = main.os;
+        //avoid bluetooth stiky package
+        if ((currentTime - lastTime >= 20) && (flag == 0)) {
+            try {
+                main.sendTS(s, false, MainActivity.COORLABEL);
+
+                System.out.println("sending x coordinate: " + dX );
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            lastTime = System.currentTimeMillis();
+        }
+
+        System.out.println("position0 cardView coordinate: " + dX);
+
+        System.out.println("get left and right" + cvh.cv.getLeft() + cvh.cv.getRight());
+        RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(0);
+                    if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                        com.citrix.taskshiftonandroid.adapter.CardViewHolder CardViewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                        System.out.println("right" + CardViewHolder.cv.getRight() + CardViewHolder.cv.getLeft());
+
+                        //CardViewHolder.cv.setTranslationX(dX - CardViewHolder.cv.getRight() - CardViewHolder.cv.getLeft());
+                        //cardview x coordinate of reciver
+                        float f2 =  dX - CardViewHolder.cv.getRight();
+                        System.out.println("position2 cardView coordinate: " + f2);
+                    }
+
+
+        System.out.println("currentStatus " + currentStatus + "isCurrentActive " + isCurrentlyActive);
+        boolean b = currentStatus == true && isCurrentlyActive == false;
+        System.out.println("current result" + b);
+
+        //when card stop swipe and release, the received card should be deleted
+        if((currentStatus == true) && (isCurrentlyActive == false) && (f < 0.5) && (swipeAccelaration == false) ) {
+            System.out.println("onSelectedChanged" + getSwipeThreshold(viewHolder) );
+            String cardDelete = "card&stop send";
+            OutputStream oss = main.os;
+            try {
+
+                System.out.println("swipeVelocity sending"  );
+                main.sendTS(cardDelete, true, MainActivity.SENDCANCELLABEL);
+                //card release before totally swiped
+                flag = 1;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        currentStatus = isCurrentlyActive;
+    }
+    @Override
+    public void onSelectedChanged (RecyclerView.ViewHolder viewHolder,
+                                   int actionState) {
+        if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+            try {
+                mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+//                System.out.println("I am running1 " + actionState + " " + viewHolder.getAdapterPosition());
+            } catch (IOException e) {
+                //System.out.println("onswipe");
+                e.printStackTrace();
+            }
+        }
+        if(actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+            //if(getSwipeThreshold())
+                //mAdapter.remove(0);
+
+        }
+
+
+
+    }
+
+
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+        // if onSwiped called, the card was send
+        flag = 1;
+        swipeAccelaration = false;
+        //System.out.println("I am running1");
+        System.out.println("onswipe " + viewHolder.getAdapterPosition());
         try {
-            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+            mAdapter.remove(viewHolder.getAdapterPosition());
         } catch (IOException e) {
-            System.out.println("assigned problematic");
             e.printStackTrace();
         }
+
+//        try {
+//            mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+//        } catch (IOException e) {
+//            System.out.println("onswipe");
+//            e.printStackTrace();
+//        }
+        //currentTime.cancel();
+//        java.util.Timer timer = new java.util.Timer(true);
+//        TimerTask task = new TimerTask() {
+//            public void run() {
+//                if (viewHolder != null && viewHolder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+//                    com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) viewHolder;
+//                    CardviewHolder.getAdapterPosition();
+//                    int[] location = new int[2];
+//                    CardviewHolder.cv.getLocationInWindow(location);
+//                    int x=location[0];//获取当前位置的横坐标
+//                    int y=location[1];//获取当前位置的纵坐标
+//
+//                    System.out.println("cardView coordinate: " + x + "  " + y);
+//
+//                }
+//            }
+//        };
+
+        //timer.schedule(task, 10, 500);
+
     }
 
     //long press enable the card to drag(up and down)
     @Override
     public boolean isLongPressDragEnabled() {
+
+        //System.out.println("I am running1");
         return true;
     }
 
     //enable the card to swipe
     @Override
     public boolean isItemViewSwipeEnabled() {
+
+        //System.out.println("I am running1");
         return true;
     }
 
