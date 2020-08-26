@@ -96,11 +96,11 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     @Override
     public void onItemDismiss(int position) throws IOException {
         Item a = Items.get(position);
-        Items.remove(position);
+        //Items.remove(position);
         String s = a.toString();
         main.sendTS(s, true, MainActivity.ITEMLABEL);
         main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
-        notifyItemRemoved(position);
+        //notifyItemRemoved(position);
     }
     @Override
     public void onItemMove(int from, int to) {
@@ -109,7 +109,8 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
     }
 
     public void remove(int position) throws IOException {
-
+        Items.remove(position);
+        notifyItemRemoved(position);
     }
     public void add(int position,Item Item) {
         Items.add(position,Item);

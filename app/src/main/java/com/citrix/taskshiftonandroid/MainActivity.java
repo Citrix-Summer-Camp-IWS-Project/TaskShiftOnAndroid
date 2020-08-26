@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int ITEMLABEL = 0;
     public static final int COORLABEL = 1;
     public static final int SENDFINISHLABEL = 2;
+    public static final int SENDCANCELLABEL = 3;
 
     private long currentTime = 0;
     private long lastTime = 0;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     private Account mAccount;
     private RecyclerView rv;
     private adapter adapter;
+    private ItemTouchHelperCallback itcb;
 
     short rssi;
     private BluetoothSocket clientSocket;
@@ -131,8 +133,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus) {
+    public void onResume(){
+        super.onResume();
+        // put your code here...
+        System.out.println("I'm resume");
+
+    }
+
+
+
+
+
+    //would run after the whole View finish loading
+
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus)
+        {
+            if(hasFocus) {
+                System.out.println("before activity loading finish");
+
+                RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(1);
+                com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                //CardviewHolder.cv.setTranslationX(100);
+                itcb = new ItemTouchHelperCallback(adapter, rv,this);
+                //itcb.initializeView(rv, 0);
+
 
         }
     }
@@ -150,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter, rv, this);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
     }
@@ -396,11 +421,15 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     super.handleMessage(msg);
-                    formalHandler(textMsg, activity);
+                    try {
+                        formalHandler(textMsg, activity);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
-        public void formalHandler(String textMsg, MainActivity activity) {
+        public void formalHandler(String textMsg, MainActivity activity) throws IOException {
             while (textMsg.contains("\0")) {
                 String currText = textMsg.substring(0,textMsg.indexOf("\0"));
                 textMsg = textMsg.substring(textMsg.indexOf("\0") + 1);
@@ -410,13 +439,31 @@ public class MainActivity extends AppCompatActivity {
                     case ITEMLABEL:
                         Item added = Item.toItem(currText);
                         added.emailAddress = activity.username;
-                        activity.Items.add(added);
-                        activity.adapter.notifyItemInserted(activity.Items.size() - 1);
+
+                        activity.adapter.add(0, added);
+                        break;
+                    case SENDCANCELLABEL:
+                        activity.adapter.remove(0);
+                        activity.itcb.setOriginX(activity.rv);
                         break;
                     case COORLABEL:
+                        float dX;
+                        try {
+                            dX = new Float(String.valueOf(currText));
+                            RecyclerView.ViewHolder holder = activity.rv.findViewHolderForAdapterPosition(0);
+                            if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                                com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                                dX = (CardviewHolder.cv.getRight() + CardviewHolder.cv.getLeft() * 2) * dX;
+                                dX = dX - CardviewHolder.cv.getLeft();
+                            }
+
+                            activity.itcb.initializeView(activity.rv, dX);
+                            activity.rv.smoothScrollToPosition(0);
+                        } catch (java.lang.NumberFormatException e) {
+                            e.printStackTrace();
+                        }
                         break;
-                    case SENDFINISHLABEL:
-                        break;
+
                 }
             }
 
