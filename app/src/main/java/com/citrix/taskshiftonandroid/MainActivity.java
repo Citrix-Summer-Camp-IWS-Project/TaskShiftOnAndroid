@@ -395,30 +395,32 @@ public class MainActivity extends AppCompatActivity {
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    while (textMsg.contains("\0")) {
-                        String currText = textMsg.substring(0,textMsg.indexOf("\0"));
-                        textMsg = textMsg.substring(textMsg.indexOf("\0") + 1);
-                        int label = Integer.parseInt(textMsg.substring(0, 1));
-                        textMsg = textMsg.substring(1);
-                        switch (label){
-                            case ITEMLABEL:
-                                Item added = Item.toItem(currText);
-                                added.emailAddress = activity.username;
-                                activity.Items.add(added);
-                                super.handleMessage(msg);
-                                activity.adapter.notifyItemInserted(activity.Items.size() - 1);
-                                break;
-                            case COORLABEL:
-                                break;
-                            case SENDFINISHLABEL:
-                                break;
-                        }
-                    }
-
+                    super.handleMessage(msg);
+                    formalHandler(textMsg, activity);
                 }
             }
         }
+        public void formalHandler(String textMsg, MainActivity activity) {
+            while (textMsg.contains("\0")) {
+                String currText = textMsg.substring(0,textMsg.indexOf("\0"));
+                textMsg = textMsg.substring(textMsg.indexOf("\0") + 1);
+                int label = Integer.parseInt(textMsg.substring(0, 1));
+                textMsg = textMsg.substring(1);
+                switch (label){
+                    case ITEMLABEL:
+                        Item added = Item.toItem(currText);
+                        added.emailAddress = activity.username;
+                        activity.Items.add(added);
+                        activity.adapter.notifyItemInserted(activity.Items.size() - 1);
+                        break;
+                    case COORLABEL:
+                        break;
+                    case SENDFINISHLABEL:
+                        break;
+                }
+            }
 
+        }
         public void connectionVerification(byte[] byteMsg, MainActivity activity) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
             String helMsg = "";
             byte[] identity = new byte[128];
