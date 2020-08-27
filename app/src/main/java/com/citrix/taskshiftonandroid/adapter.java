@@ -100,7 +100,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         String s = a.toString();
         main.sendTS(s, true, MainActivity.ITEMLABEL);
         main.ChangeIssueAssignee(main.getmAccount().getUsername(),main.getmAccount().getToken(), a.taskid, main.getmAccount().getAccountID());
-        notifyItemRemoved(position);
+        //notifyItemRemoved(position);
         //notifyItemRemoved(position);
     }
     @Override
