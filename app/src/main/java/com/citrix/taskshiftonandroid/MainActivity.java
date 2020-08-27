@@ -441,9 +441,16 @@ public class MainActivity extends AppCompatActivity {
                         added.emailAddress = activity.username;
 
                         activity.adapter.add(0, added);
+
+                        activity.rv.smoothScrollToPosition(0);
                         break;
                     case SENDCANCELLABEL:
                         activity.adapter.remove(0);
+                        activity.itcb.setOriginX(activity.rv);
+
+                        activity.rv.smoothScrollToPosition(0);
+                        break;
+                    case SENDFINISHLABEL:
                         activity.itcb.setOriginX(activity.rv);
                         break;
                     case COORLABEL:
