@@ -1,5 +1,7 @@
 package com.citrix.taskshiftonandroid;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -28,15 +30,18 @@ public class Account implements Serializable {
     private String url;
     private String clientID;
     private String clientSecret;
+    private int imageID;
 
-    Account(String username, String token, String accountID, String url, String clientID, String clientSecret) {
+    Account(String username, String token, String accountID, String url, String clientID, String clientSecret, int imageID) {
         this.username = username;
         this.token = token;
         this.accountID = accountID;
         this.url = url;
         this.clientID = clientID;
         this.clientSecret = clientSecret;
+        this.imageID = imageID;
     }
+    public int getImageID() { return imageID; }
 
     public String getUsername() {
         return username;

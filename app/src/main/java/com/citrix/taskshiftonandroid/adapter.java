@@ -45,7 +45,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
                 int position = cvh.getAdapterPosition();
                 Item a = Items.get(position);
                 try {
-                    main.ChangeIssueStatus(main.username,main.token, a.taskid, TaskState.inProgress.getStateNum());
+                    main.ChangeIssueStatus(main.getmAccount().getUsername(),main.getmAccount().getToken(), a.taskid, TaskState.inProgress.getStateNum());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -58,7 +58,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
                 int position = cvh.getAdapterPosition();
                 Item a = Items.get(position);
                 try {
-                    main.ChangeIssueStatus(main.username,main.token, a.taskid, TaskState.done.getStateNum());
+                    main.ChangeIssueStatus(main.getmAccount().getUsername(),main.getmAccount().getToken(), a.taskid, TaskState.done.getStateNum());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -99,7 +99,7 @@ public class adapter extends RecyclerView.Adapter<adapter.CardViewHolder> implem
         Items.remove(position);
         String s = a.toString();
         main.sendTS(s);
-        main.ChangeIssueAssignee(main.username,main.token, a.taskid, main.AccountID);
+        main.ChangeIssueAssignee(main.getmAccount().getUsername(),main.getmAccount().getToken(), a.taskid, main.getmAccount().getAccountID());
         notifyItemRemoved(position);
     }
     @Override

@@ -49,6 +49,13 @@ public class Launch extends AppCompatActivity {
         spThread.start();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return false;
+    }
+
     class Splash extends Thread {
         public void run() {
             //get account from Login
@@ -66,13 +73,6 @@ public class Launch extends AppCompatActivity {
             startActivity(intent);
             ((Activity) Launch.this).overridePendingTransition(0, 0);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
     }
 
     @Override

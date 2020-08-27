@@ -2,11 +2,14 @@ package com.citrix.taskshiftonandroid;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -22,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,7 +34,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
@@ -80,18 +87,21 @@ public class MainActivity extends AppCompatActivity {
 
     // Hardcode tokens
     //public String username = "xeal3k@gmail.com";
-    public String username = "carlostian927@berkeley.edu";
     //public String token = "dK9YeYe38KuOfEDacc0wCC34";
-    public String token = "DwNBtNVKteYVQd7MjNHF0250";
     //public String AccountID = "5f033116b545e200154e76f4";
-    public String AccountID = "5f03322ad6803200212f2dc0";
-
 
 
     private List<Item> Items = new ArrayList<>();
     private Account mAccount;
+    public Account getmAccount() {
+        return mAccount;
+    }
     private RecyclerView rv;
     private adapter adapter;
+    private ProgressBar loadingView;
+    private Menu mMenu;
+    private MenuItem personUI;
+    private ImageView personImage;
 
     short rssi;
     private BluetoothSocket clientSocket;
@@ -131,17 +141,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (hasFocus) {
-
         }
     }
 
     private void initializeAdapter() {
         Intent intent = getIntent();
         ArrayList<Item> itemsString = (ArrayList<Item>) intent.getSerializableExtra("items");
+        mAccount = (Account)intent.getSerializableExtra("account");
         for (Item item : itemsString) {
             Items.add(item);
         }
-        mAccount = (Account)intent.getSerializableExtra("account");
         adapter = new adapter(Items, this);
         rv = (RecyclerView) findViewById(R.id.tasklist);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -158,55 +167,22 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(discvoerReceiver);
         unregisterReceiver(dynamicReceiver);
     }
+
     //launch menu
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        mMenu = menu;
+        personUI = menu.findItem(R.id.menuitem);
+        Context context = getApplicationContext();
+        ConstraintLayout personLayout = (ConstraintLayout) personUI.getActionView();
+        personImage = (ImageView) personLayout.findViewById(R.id.imageUI);
+        personImage.setVisibility(View.GONE);
+
+        if (BluetoothAdapter.getDefaultAdapter() != null) {
+            connectForPaired();
+        }
         return super.onCreateOptionsMenu(menu);
     }
-    //menu button test
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.action_add:
-
-                deviceManager = getSystemService(CompanionDeviceManager.class);
-                deviceFilter = new BluetoothDeviceFilter.Builder().build();
-                pairingRequest = new AssociationRequest.Builder()
-                        .addDeviceFilter(deviceFilter)
-                        .setSingleDevice(false)
-                        .build();
-                deviceManager.associate(pairingRequest,
-                        new CompanionDeviceManager.Callback() {
-                            @Override
-                            public void onDeviceFound(IntentSender chooserLauncher) {
-                                try {
-                                    startIntentSenderForResult(chooserLauncher,
-                                            SELECT_DEVICE_REQUEST_CODE, null, 0, 0, 0);
-                                } catch (IntentSender.SendIntentException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(CharSequence charSequence) {
-
-                            }
-                        },
-                        null);
-                break;
-            case R.id.action_remove:
-                //事件
-                Items.remove(0);
-                adapter.notifyItemRemoved(0);
-                System.out.println("this is bug???");
-
-                break;
-        }
-        return true;
-    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -351,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         public void getItemOffsets(Rect outRect, View view,
                                    RecyclerView parent, RecyclerView.State state) {
 
-            if (parent.getChildPosition(view) != parent.getChildCount() ) {
+            if (parent.getChildPosition(view) != parent.getChildCount()) {
                 outRect.bottom = space;
 
                 //detect the dynamic change in list
@@ -359,7 +335,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private static class MyHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
@@ -371,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             MainActivity activity = mActivity.get();
-            if (activity!=null) {
+            if (activity != null) {
                 if (numTexts == 0) {
                     super.handleMessage(msg);
                     byte[] byteMsg = (byte[]) msg.obj;
@@ -389,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Item added = Item.toItem(item);
-                    added.emailAddress = activity.username;
+                    added.emailAddress = activity.mAccount.getUsername();
                     activity.Items.add(added);
                     super.handleMessage(msg);
                     activity.adapter.notifyItemInserted(activity.Items.size() - 1);
@@ -414,6 +389,9 @@ public class MainActivity extends AppCompatActivity {
             String email = helMsg.substring(0, emailPos);
             if (email.equals(finalMsg)){
                 Toast.makeText(activity.getApplicationContext(), "Identity verified", Toast.LENGTH_SHORT).show();
+                Drawable image = ContextCompat.getDrawable(activity.getApplicationContext(), AllAccounts.getAccount(email).getImageID());
+                activity.personImage.setImageDrawable(image);
+                activity.personImage.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(activity.getApplicationContext(), "Identity unverified", Toast.LENGTH_SHORT).show();
             }

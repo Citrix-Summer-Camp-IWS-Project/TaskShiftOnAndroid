@@ -23,8 +23,8 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.login);
         final Button TL = (Button) findViewById(R.id.TL);
         Button LHR = (Button) findViewById(R.id.LHR);
-        TL.setTag("TL");
-        LHR.setTag("LHR");
+        TL.setTag("carlostian927@berkeley.edu");
+        LHR.setTag("xeal3k@gmail.com");
         AllAccounts.init();
         TL.setOnClickListener(v -> {
             buttonHelper(v);

@@ -15,8 +15,8 @@ public class AllAccounts {
                 "redirect_uri=https%3A%2F%2Fbaidu.com&state=${YOUR_USER_BOUND_VALUE}&" +
                 "response_type=code&prompt=consent",
                 "gA7g3MYgFxnsHfQauyGIMIFK5AtWPwC2",
-                "aj5P5sCvsNVLyfZvj0tsp5fA_SyVOliPWNvEvTwLtEMTVxjpERgHSm00l3F_SnVP");
-        accountMap.put("TL", TLAccount);
+                "aj5P5sCvsNVLyfZvj0tsp5fA_SyVOliPWNvEvTwLtEMTVxjpERgHSm00l3F_SnVP", R.drawable.lt_3);
+        accountMap.put("carlostian927@berkeley.edu", TLAccount);
         Account LHRAccount = new Account("xeal3k@gmail.com",
                 "dK9YeYe38KuOfEDacc0wCC34", "5f033116b545e200154e76f4",
                 "https://auth.atlassian.com/authorize?audience=api.atlassian.com&" +
@@ -25,8 +25,8 @@ public class AllAccounts {
                 "redirect_uri=https%3A%2F%2Fbaidu.com&state=${YOUR_USER_BOUND_VALUE}&" +
                 "response_type=code&prompt=consent",
                 "wVYliO37FC1rRAcjs3ro2Kbl0OP4Opyk",
-                "Yv-tiqGXzi8vrqJ0PqE0oR52-7q53OpMWOEmB3-BR1kZpbN2rn_11iRIV9yYOwva");
-        accountMap.put("LHR", LHRAccount);
+                "Yv-tiqGXzi8vrqJ0PqE0oR52-7q53OpMWOEmB3-BR1kZpbN2rn_11iRIV9yYOwva", R.drawable.hl_1);
+        accountMap.put("xeal3k@gmail.com", LHRAccount);
     }
 
     static Account getAccount(String id) {

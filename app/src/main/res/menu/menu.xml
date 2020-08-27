@@ -3,16 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.text.MainActivity">
 
-    <item
-        android:id="@+id/action_add"
-        android:orderInCategory="1"
-        android:title='@string/add'
-        app:showAsAction="ifRoom"></item>
 
+    <!--    <item-->
+    <!--        android:id="@+id/action_remove"-->
+    <!--        android:orderInCategory="2"-->
+    <!--        android:title="test"-->
+    <!--        app:showAsAction="ifRoom" />-->
     <item
-        android:id="@+id/action_remove"
-        android:orderInCategory="2"
-        android:title='@string/delete'
-        app:showAsAction="ifRoom" />
+        android:id="@+id/menuitem"
+        android:orderInCategory="1"
+        android:title=""
+        android:visibility="gone"
+        app:actionLayout="@layout/menuitem"
+        app:showAsAction="always" />
+
+    <!--        android:icon="@drawable/hl_1"-->
 
 </menu>
