@@ -42,7 +42,7 @@ public class Web extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.web);
-
+        AllAccounts.init();
         try {
             setWebView();
         } catch (InterruptedException e) {
@@ -53,7 +53,7 @@ public class Web extends AppCompatActivity {
     @SuppressLint("SetJavaScriptEnabled")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void setWebView() throws InterruptedException {
-        Account account = (Account) getIntent().getSerializableExtra("Account");
+        Account account = AllAccounts.getAccount("carlostian927@berkeley.edu");
         webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(account.getUrl());
