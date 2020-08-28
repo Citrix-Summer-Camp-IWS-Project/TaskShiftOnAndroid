@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -74,13 +75,12 @@ public class Web extends AppCompatActivity {
                     Intent intent = new Intent(Web.this, Launch.class);
                     intent.putExtra("Account", account);
                     startActivity(intent);
+                    ((Activity) Web.this).overridePendingTransition(0, 0);
+
                 }
                 return false;
             }
         });
-
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
     }
 
     public String getCode(String url) {

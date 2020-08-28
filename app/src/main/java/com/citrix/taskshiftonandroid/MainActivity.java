@@ -85,12 +85,13 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Hardcode tokens
-    //public String username = "xeal3k@gmail.com";
-    //public String token = "dK9YeYe38KuOfEDacc0wCC34";
-    //public String AccountID = "5f033116b545e200154e76f4";
+    public static final int ITEMLABEL = 0;
+    public static final int COORLABEL = 1;
+    public static final int SENDFINISHLABEL = 2;
+    public static final int SENDCANCELLABEL = 3;
 
-
+    private long currentTime = 0;
+    private long lastTime = 0;
     private List<Item> Items = new ArrayList<>();
     private Account mAccount;
     public Account getmAccount() {
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private Menu mMenu;
     private MenuItem personUI;
     private ImageView personImage;
+    private ItemTouchHelperCallback itcb;
 
     short rssi;
     private BluetoothSocket clientSocket;
@@ -110,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
     public OutputStream os;
     private AcceptThread ac;
 
-    private int numTexts;
-    //private static final int REQUEST_ENABLE_BT = 1;
     private CompanionDeviceManager deviceManager;
     private AssociationRequest pairingRequest;
     private BluetoothDeviceFilter deviceFilter;
@@ -139,8 +139,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus) {
+    public void onResume(){
+        super.onResume();
+        // put your code here...
+        System.out.println("I'm resume");
+    }
+
+    //would run after the whole View finish loading
+        @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        if(hasFocus) {
+            System.out.println("before activity loading finish");
+            RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(1);
+            com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+            itcb = new ItemTouchHelperCallback(adapter, rv, this);
         }
     }
 
@@ -151,13 +164,14 @@ public class MainActivity extends AppCompatActivity {
         for (Item item : itemsString) {
             Items.add(item);
         }
+        mAccount = (Account)intent.getSerializableExtra("account");
         adapter = new adapter(Items, this);
         rv = (RecyclerView) findViewById(R.id.tasklist);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter, rv, this);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(rv);
     }
@@ -218,12 +232,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void sendTS(String ts) throws IOException {
+    public void sendTS(String ts, boolean necessaryMsg, int label) throws IOException {
         if (os == null) {
             Toast.makeText(getApplicationContext(), "Please make a connection first.", Toast.LENGTH_SHORT).show();
             return;
         }
-        os.write(ts.getBytes("GBK"));
+        ts = ts + "\0" + Integer.toString(label);
+        currentTime = System.currentTimeMillis();
+        if (currentTime - lastTime >= 20 || necessaryMsg) {
+            os.write(ts.getBytes("UTF-8"));
+            lastTime = System.currentTimeMillis();
+        }
         return;
     }
 
@@ -357,21 +376,65 @@ public class MainActivity extends AppCompatActivity {
                     }
                     numTexts ++;
                 } else {
-                    String item = "";
+                    String textMsg = "";
                     try {
-                        item = new String((byte[]) msg.obj, "UTF-8");
+                        textMsg = new String((byte[]) msg.obj, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    Item added = Item.toItem(item);
-                    added.emailAddress = activity.mAccount.getUsername();
-                    activity.Items.add(added);
                     super.handleMessage(msg);
-                    activity.adapter.notifyItemInserted(activity.Items.size() - 1);
+                    try {
+                        formalHandler(textMsg, activity);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
 
+        public void formalHandler(String textMsg, MainActivity activity) throws IOException {
+            while (textMsg.contains("\0")) {
+                String currText = textMsg.substring(0, textMsg.indexOf("\0"));
+                textMsg = textMsg.substring(textMsg.indexOf("\0") + 1);
+                int label = Integer.parseInt(textMsg.substring(0, 1));
+                textMsg = textMsg.substring(1);
+                switch (label) {
+                    case ITEMLABEL:
+                        Item added = Item.toItem(currText);
+                        added.emailAddress = activity.mAccount.getUsername();
+
+                        activity.adapter.add(0, added);
+
+                        activity.rv.smoothScrollToPosition(0);
+                        break;
+                    case SENDCANCELLABEL:
+                        activity.adapter.remove(0);
+                        activity.itcb.setOriginX(activity.rv);
+                        activity.rv.smoothScrollToPosition(0);
+                        break;
+                    case SENDFINISHLABEL:
+                        activity.itcb.setOriginX(activity.rv);
+                        break;
+                    case COORLABEL:
+                        float dX;
+                        try {
+                            dX = Float.valueOf((String.valueOf(currText)));
+                            RecyclerView.ViewHolder holder = activity.rv.findViewHolderForAdapterPosition(0);
+                            if (holder != null && holder instanceof com.citrix.taskshiftonandroid.adapter.CardViewHolder) {
+                                com.citrix.taskshiftonandroid.adapter.CardViewHolder CardviewHolder = (com.citrix.taskshiftonandroid.adapter.CardViewHolder) holder;
+                                dX = (CardviewHolder.cv.getRight() + CardviewHolder.cv.getLeft() * 2) * dX;
+                                dX = dX - CardviewHolder.cv.getLeft();
+                            }
+                            activity.itcb.initializeView(activity.rv, dX);
+                            activity.rv.smoothScrollToPosition(0);
+                        } catch (java.lang.NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+            }
+
+        }
         public void connectionVerification(byte[] byteMsg, MainActivity activity) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
             String helMsg = "";
             byte[] identity = new byte[128];
