@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 clientSocket.connect();
                 os = clientSocket.getOutputStream();
             } catch (Exception e) {
-                Toast.makeText(getApplicationContext()," " + device.getName() + "Connection Failed.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext()," " + device.getName() + "Connection Failed.", Toast.LENGTH_SHORT).show();
                 tryConnect(device);
             }
             if (os != null && connectedCount == 0) {
