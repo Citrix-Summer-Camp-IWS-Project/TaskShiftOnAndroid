@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent =
                     new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 1200);
             startActivity(discoverableIntent);
         }
     }
@@ -332,7 +332,11 @@ public class MainActivity extends AppCompatActivity {
         byte[] identity = mAccount.RSAEncrypt(mAccount.getUsername(), key);
         String confirm = mAccount.getUsername() + " has connected to you with Rssi: " + Short.toString(rssi);
         byte[] sendMsg = bytesMerger(identity, confirm.getBytes("UTF-8"));
+        Drawable image = ContextCompat.getDrawable(getApplicationContext(), AllAccounts.getAccount("xeal3k@gmail.com").getImageID());
+        personImage.setImageDrawable(image);
+        personImage.setVisibility(View.VISIBLE);
         os.write(sendMsg);
+
     }
     // for the divider width
     class SpacesItemDecoration extends RecyclerView.ItemDecoration {
