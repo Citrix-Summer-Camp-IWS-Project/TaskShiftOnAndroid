@@ -21,6 +21,8 @@ After the Identity confirmation, the connected users' Avatar would shown at the 
 
 User could review and choose the tasks shown as a cards list. Swiping a card horizontally from left, when half of the card disappeared from the sender's screen, the corresponding half part of the card would show dynamically on the screen of receiver; If the sender wants to stop while swiping, he could just hold and put the card back so that correspond contents would disappear dynamically on receiver's device. The users could control "how much" they want to swipe.
 
+<img src="https://github.com/Citrix-Summer-Camp-IWS-Project/TaskShiftOnAndroid/blob/master/READMEIMAGE/Image%201.png" width="40%"> <img src="https://github.com/Citrix-Summer-Camp-IWS-Project/TaskShiftOnAndroid/blob/master/READMEIMAGE/Image%202.png" width="40%"> <img src="https://github.com/Citrix-Summer-Camp-IWS-Project/TaskShiftOnAndroid/blob/master/READMEIMAGE/Image%203.png" width="40%"> <img src="https://github.com/Citrix-Summer-Camp-IWS-Project/TaskShiftOnAndroid/blob/master/READMEIMAGE/Image%204.png" width="40%">
+
 ## Installation and Usage
 
 Requirement: Android 9.0 and above, Jira account, Permission of GPS location as well as Bluetooth Management for the app
